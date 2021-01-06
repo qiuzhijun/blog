@@ -1,0 +1,44 @@
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+  <title>Cealum博客-后台管理首页</title>
+</head>
+<body>
+  <!--导航-->
+  <nav th:replace="adminHtml/_fragments :: menu(0)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small" >
+  </nav>
+  <br>  <!--中间内容-->
+  <div  class="m-container-small  m-padded-tb-big">
+    <div class="ui  container">
+      <div class="ui m_t_bc_color_theme success large  message">
+        <center>
+        <h1 th:text="'╰(≧∇≦) 欢迎 |' +${session.user.nickname + '|  回家!! (≧∇≦)╯'}" class="m_black">不动声色，欢迎登录！</h1>
+        </center>
+      </div>
+
+      <img src="/images/wel.jpg" alt="" class="ui rounded bordered fluid image">
+    </div>
+  </div>
+  <br>
+  <br>
+  <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
+  </footer>
+  <!--/*/<th:block th:replace="_fragments :: script">/*/-->
+  <!--/*/</th:block>/*/-->
+  <script>
+    $(document).ready(function () {
+      $("#answer").popup({
+        popup: $(".checkAnswer.popup"),
+        on: "click",
+        position: "top center"
+      });
+      $('.ui.dropdown').dropdown({
+        on: 'hover'
+      });
+    })
+
+  </script>
+</body>
+</html>

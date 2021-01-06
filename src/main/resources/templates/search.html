@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <title>Cealum博客-搜索结果</title>
+</head>
+<body>
+
+<nav th:replace="_fragments :: menu(0)" id="back-top"
+     class="ui inverted m_shadow_small attached segment m_padded_tb_mini"></nav>
+<!--中间内容-->
+<div id="waypoint" class="animated fadeIn m_container_mini m_padded_tb_big">
+    <div class="ui container">
+        <!--头部-->
+        <div class="ui ct top attached segment">
+            <!--创建两列的布局，并设置垂直居中-->
+            <div class="ui middle aligned two column grid">
+                <!--博客字样-->
+                <div class="column">
+                    <h3 class="ui m_t_color_name header">搜索结果</h3>
+                </div>
+                <!--篇数字样-->
+                <div class="right aligned column">
+                    共 <h3 th:text="${page.totalElements}" class="ui orange header m_inline_block">10</h3> 个
+                </div>
+            </div>
+        </div>
+
+        <div th:each="blog : ${page.content}" class="ui attached  ct  segment">
+            <!--文章部分-->
+            <div class="ui middle aligned mobile reversed stackable grid">
+                <!--左边文章部分-->
+                <div class="eleven wide column">
+                    <h3 class="ui date header"><a th:href="@{/blog/{id}(id=${blog.id})}" target="_blank"
+                                                  th:text="${blog.title}" class="c m_black">活着不是为了活着</a></h3><br>
+                    <p class="m_text" th:text="|${blog.description}……|"></p>
+                    <br>
+                    <div class="ui stackable grid">
+                        <!--左边个人信息-->
+                        <div class="eleven wide column">
+                            <!--横列表-->
+                            <div class="ui mini horizontal link list">
+
+                                <div class="item">
+                                    <!--插入图片-->
+                                    <img th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
+                                         class="ui avatar image">
+                                    <!--作者名-->
+                                    <div class="content"><a href="#" th:text="${blog.user.nickname}" class=" header">一叶知秋</a>
+                                    </div>
+                                </div>
+                                <div class=" c item">
+                                    <i class="calendar alternate outline icon"></i><span
+                                        th:text="${#dates.format(blog.updateTime,'yyyy-MM-dd')}">2020/12/05</span>
+                                </div>
+                                <div class="c item">
+                                    <i class="eye icon"></i> <span th:text="${blog.view}">10w+</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--右边的标签，位置靠右-->
+                        <div class="right aligned five wide column">
+                            <!--设置蓝色透明标签-->
+                            <a th:text="${blog.type.name}" href="#" target="_blank"
+                               class="ui m_padded_mini m_text_thin basic violet label">励志</a>
+                        </div>
+                    </div>
+                </div>
+                <!--右边图片部分-->
+                <div class="five wide column">
+                    <!--点击图片新打开链接--><br>
+                    <a th:href="@{/blog/{id}(id=${blog.id})}" target="_blank">
+                        <img th:src="@{${blog.firstPicture}}" alt="图片走丢了QWQ。"
+                             class="ui rounded image">
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="ui ct attached bottom segment">
+            <div th:if="${page.totalPages>1}" class="ui middle aligned two column grid">
+                <!--上一页-->
+                <div class="column">
+                    <a th:href="@{/(page=${page.number}-1)}" th:unless="${page.first}"
+                       class="ui basic blue mini button">上一页</a>
+                </div>
+                <!--下一页-->
+                <div class="right aligned column">
+                    <a th:href="@{/(page=${page.number}+1)}" th:unless="${page.last}" class="ui basic blue mini button">下一页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="_fragments :: tools"></div>
+<!--底部-->
+<br/><br/><br/>
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
+</footer>
+<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+<!--赞赏功能，点击弹出二维码 -->
+<script>
+
+    $(".toc-btn").popup({
+        popup: $(".toc-con.popup"),
+        on: "click",
+        position: "left center"
+    });
+
+    $(".wx").popup({
+        popup: $(".wx-con.popup"),
+        position: "left center"
+    });
+
+    /*移动端显示菜单*/
+    $('.menu.toggle').click(function () {
+        $('.m_item').toggleClass('m_mobile_hide');
+    });
+    /*弹出答案*/
+    $("#answer").popup({
+        popup: $(".checkAnswer.popup"),
+        on: "click",
+        position: "top center"
+    });
+    /*关灯 、开灯功能*/
+    /*关灯按钮*/
+    var cl = $(".close-light")
+    /*用于判断*/
+    var flag = "<i class=\"small lightbulb outline icon\"></i>关灯"
+    cl.click(function () {
+        if (cl.html() === flag) {
+            cl.html("<i class=\"small lightbulb icon\"></i>开灯")
+            $(".ct").addClass("inverted");
+            $(".c").addClass("m_black");
+            $(".plcon").addClass("m_t_bc_color_gd");
+            $(".cc,.c").removeClass("basic");
+            $(".cc,.c1").addClass("m_t_color_white");
+
+
+        } else {
+            cl.html(flag);
+            $(".c").removeClass("m_t_color_white");
+            $(".ct").removeClass("inverted");
+            $(".c,.c1").removeClass("m_t_color_white");
+            $(".c,.cc").addClass("basic");
+            $(".plcon").removeClass("m_t_bc_color_gd");
+        }
+    });
+    /*生成二维码*/
+    var qrcode = new QRCode("qrcode", {
+        text: "http://www.runoob.com",
+        width: 90,
+        height: 90,
+        colorDark: "#BA55D3",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    /*返回顶部 ，平滑滚动*/
+    $("#toTop").click(function () {
+        $(window).scrollTo(0, 500);
+    })
+    /*监测滚动*/
+    var waypoint = new Waypoint({
+        element: document.getElementById('waypoint'),
+        handler: function (direction) {
+            if (direction === "down") {
+                $("#tools").removeClass("animated fadeOutRight");
+                $("#tools").show(0, function () {
+                    $("#tools").addClass("animated fadeInRight");
+                });
+            } else if (direction === "up") {
+                $("#tools").removeClass("animated fadeInRight");
+                $("#tools").hide(200);
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

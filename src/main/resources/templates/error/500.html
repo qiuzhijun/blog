@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cealum博客-抢修中</title>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background: black;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+<center>
+    <div>
+        <a th:href="@{/}"><svg t="1608177019816" class="icon" viewBox="0 0 1129 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5247" width="200" height="200"><path d="M919.481379 725.98069H214.863448a17.655172 17.655172 0 0 1-17.655172-17.655173V289.368276a52.965517 52.965517 0 0 1 52.965517-52.965517h633.997241a52.965517 52.965517 0 0 1 52.965518 52.965517v418.957241a17.655172 17.655172 0 0 1-17.655173 17.655173z m-686.962758-35.310345h669.307586V289.368276a17.655172 17.655172 0 0 0-17.655173-17.655173H250.173793a17.655172 17.655172 0 0 0-17.655172 17.655173z" fill="#3164AF" p-id="5248"></path><path d="M941.02069 787.597241H191.558621a52.965517 52.965517 0 0 1-52.965518-52.965517v-26.306207a17.655172 17.655172 0 0 1 17.655173-17.655172H976.331034a17.655172 17.655172 0 0 1 17.655173 17.655172v26.306207a52.965517 52.965517 0 0 1-52.965517 52.965517zM173.903448 725.98069v8.651034a17.655172 17.655172 0 0 0 17.655173 17.655173H941.02069a17.655172 17.655172 0 0 0 17.655172-17.655173v-8.651034zM847.448276 658.184828H292.722759a17.655172 17.655172 0 0 1-17.655173-17.655173V316.557241a17.655172 17.655172 0 0 1 17.655173-17.655172H847.448276a17.655172 17.655172 0 0 1 17.655172 17.655172v323.972414a17.655172 17.655172 0 0 1-17.655172 17.655173z m-537.423448-35.310345H829.793103V334.212414H310.377931z" fill="#3164AF" p-id="5249"></path><path d="M645.296552 585.798621a12.182069 12.182069 0 0 1-7.944828-3.177931L547.310345 512a68.855172 68.855172 0 0 1-67.266207-10.946207 69.561379 69.561379 0 0 1-23.834483-71.503448 13.064828 13.064828 0 0 1 8.474483-9.004138 12.711724 12.711724 0 0 1 12.005517 2.118621l35.310345 27.71862 12.888276-16.242758L489.048276 406.068966a12.182069 12.182069 0 0 1-4.766897-11.299311 12.535172 12.535172 0 0 1 6.885518-10.063448 69.384828 69.384828 0 0 1 100.634482 54.024827 74.504828 74.504828 0 0 1 0 16.595863l90.571035 71.68a12.535172 12.535172 0 0 1 2.11862 17.655172l-28.954482 36.369655a13.417931 13.417931 0 0 1-10.24 4.766897z m-96.750345-102.223449a13.241379 13.241379 0 0 1 7.944827 2.824828l86.863449 68.502069 12.888276-16.242759-86.686897-68.502069a12.888276 12.888276 0 0 1-4.413793-13.241379 42.902069 42.902069 0 0 0 1.235862-15.713103 43.608276 43.608276 0 0 0-16.242759-29.307587 44.491034 44.491034 0 0 0-24.364138-9.533793l23.657932 19.067587a12.711724 12.711724 0 0 1 2.11862 17.655172l-28.954483 36.546207a12.711724 12.711724 0 0 1-17.655172 1.942069L480.750345 459.034483a44.667586 44.667586 0 0 0 14.653793 21.715862 43.078621 43.078621 0 0 0 32.132414 9.180689 42.01931 42.01931 0 0 0 15.183448-4.590344 13.417931 13.417931 0 0 1 5.826207-1.765518z" fill="#3164AF" p-id="5250"></path></svg></a>
+        <br>
+
+        <canvas width="400" height="400" id="game"></canvas>
+    </div></center>
+<script>
+    var canvas = document.getElementById('game');
+    var context = canvas.getContext('2d');
+
+    var grid = 16;
+    var count = 0;
+
+    var snake = {
+        x: 160,
+        y: 160,
+
+        // snake velocity. moves one grid length every frame in either the x or y direction
+        dx: grid,
+        dy: 0,
+
+        // keep track of all grids the snake body occupies
+        cells: [],
+
+        // length of the snake. grows when eating an apple
+        maxCells: 4
+    };
+    var apple = {
+        x: 320,
+        y: 320
+    };
+
+    // get random whole numbers in a specific range
+    // @see https://stackoverflow.com/a/1527820/2124254
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    // game loop
+    function loop() {
+        requestAnimationFrame(loop);
+
+        // slow game loop to 15 fps instead of 60 (60/15 = 4)
+        if (++count < 4) {
+            return;
+        }
+
+        count = 0;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // move snake by it's velocity
+        snake.x += snake.dx;
+        snake.y += snake.dy;
+
+        // wrap snake position horizontally on edge of screen
+        if (snake.x < 0) {
+            snake.x = canvas.width - grid;
+        } else if (snake.x >= canvas.width) {
+            snake.x = 0;
+        }
+
+        // wrap snake position vertically on edge of screen
+        if (snake.y < 0) {
+            snake.y = canvas.height - grid;
+        } else if (snake.y >= canvas.height) {
+            snake.y = 0;
+        }
+
+        // keep track of where snake has been. front of the array is always the head
+        snake.cells.unshift({x: snake.x, y: snake.y});
+
+        // remove cells as we move away from them
+        if (snake.cells.length > snake.maxCells) {
+            snake.cells.pop();
+        }
+
+        // draw apple
+        context.fillStyle = 'red';
+        context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+        // draw snake one cell at a time
+        context.fillStyle = 'green';
+        snake.cells.forEach(function (cell, index) {
+
+            // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
+            context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+
+            // snake ate apple
+            if (cell.x === apple.x && cell.y === apple.y) {
+                snake.maxCells++;
+
+                // canvas is 400x400 which is 25x25 grids
+                apple.x = getRandomInt(0, 25) * grid;
+                apple.y = getRandomInt(0, 25) * grid;
+            }
+
+            // check collision with all cells after this one (modified bubble sort)
+            for (var i = index + 1; i < snake.cells.length; i++) {
+
+                // snake occupies same space as a body part. reset game
+                if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+                    snake.x = 160;
+                    snake.y = 160;
+                    snake.cells = [];
+                    snake.maxCells = 4;
+                    snake.dx = grid;
+                    snake.dy = 0;
+
+                    apple.x = getRandomInt(0, 25) * grid;
+                    apple.y = getRandomInt(0, 25) * grid;
+                }
+            }
+        });
+    }
+
+    // listen to keyboard events to move the snake
+    document.addEventListener('keydown', function (e) {
+        // prevent snake from backtracking on itself by checking that it's
+        // not already moving on the same axis (pressing left while moving
+        // left won't do anything, and pressing right while moving left
+        // shouldn't let you collide with your own body)
+
+        // left arrow key
+        if (e.which === 37 && snake.dx === 0) {
+            snake.dx = -grid;
+            snake.dy = 0;
+        }
+        // up arrow key
+        else if (e.which === 38 && snake.dy === 0) {
+            snake.dy = -grid;
+            snake.dx = 0;
+        }
+        // right arrow key
+        else if (e.which === 39 && snake.dx === 0) {
+            snake.dx = grid;
+            snake.dy = 0;
+        }
+        // down arrow key
+        else if (e.which === 40 && snake.dy === 0) {
+            snake.dy = grid;
+            snake.dx = 0;
+        }
+    });
+
+    // start the game
+    requestAnimationFrame(loop);
+</script>
+</body>
+
+</html>
