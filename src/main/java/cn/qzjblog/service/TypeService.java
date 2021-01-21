@@ -1,8 +1,8 @@
 package cn.qzjblog.service;
 
-import cn.qzjblog.po.Type;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import cn.qzjblog.entity.Type;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface TypeService {
 
     List<Type> listTypeTop(Integer size);
 
-    Page<Type> listType(Pageable pageable);
+    Page<Type> listType(Page<Type> page);
 
     List<Type> listType();
 

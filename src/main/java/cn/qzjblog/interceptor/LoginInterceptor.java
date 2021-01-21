@@ -5,9 +5,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Created by limi on 2017/10/15.
- */
 public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
@@ -15,7 +12,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
         if (request.getSession().getAttribute("user") == null) {
-            response.sendRedirect("/admin");
+            response.sendRedirect("/blog/");
             return false;
         }
         return true;

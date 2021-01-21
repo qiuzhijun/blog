@@ -1,11 +1,11 @@
 package cn.qzjblog.web.admin;
 
-import cn.qzjblog.po.Tag;
+import cn.qzjblog.entity.Blog;
+import cn.qzjblog.entity.Tag;
+import cn.qzjblog.entity.Type;
 import cn.qzjblog.service.TagService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +26,15 @@ public class TagController {
 
     @GetMapping("tags")
     //springboot根据前段页面构造好的参数，自动封装好的自动分页方法
-    public String tags
-            (@PageableDefault(size = 8,//指定一页放多少数据
-                    sort = {"id"}, //根据什么来排序
-                    direction = Sort.Direction.DESC)//倒序
-                     Pageable pageable, Model model) {
-        model.addAttribute("page", service.listTag(pageable));
+    public String tags(Integer current,Integer size, Model model) {
+        Page<Tag> page = new Page<>(1,6);
+        if(current != null){
+            page.setCurrent(current);
+        }
+        model.addAttribute("page", service.listTag(page));
+        Double num = (double)page.getTotal() / page.getSize();
+        Double pageNum = Math.ceil(num);
+        model.addAttribute("lastPage",pageNum);
         return "adminHtml/tags";
     }
 

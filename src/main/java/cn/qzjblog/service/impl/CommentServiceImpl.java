@@ -1,13 +1,13 @@
 package cn.qzjblog.service.impl;
 
-import cn.qzjblog.dao.CommentRepository;
-import cn.qzjblog.po.Comment;
+import cn.qzjblog.entity.Comment;
+import cn.qzjblog.mapper.CommentMapper;
 import cn.qzjblog.service.CommentService;
+import cn.qzjblog.util.ListUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,26 +20,50 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentMapper commentMapper;
 
 
+
+    //展示评论，返回一个评论集合
     @Override
     public List<Comment> listCommentByBlogId(Long blogId) {
-        Sort sort = Sort.by("createTime");
-        List<Comment> commentList =  commentRepository.findByBlogIdAndParentCommentNull(blogId,sort);
-        return eachComment(commentList);
+        QueryWrapper<Comment> wrapper = new QueryWrapper<>();
+        wrapper.isNull("parent_comment_id");
+        wrapper.eq("blog_id", blogId);
+        wrapper.orderByAsc("create_time");
+        //查出所有顶级评论
+        List<Comment> commentList = commentMapper.selectList(wrapper);
+        wrapper.clear();
+        for (Comment comment : commentList) {
+            List<Comment> replyComments = commentMapper.selectReplyComments(comment.getId(),blogId);
+            comment.setReplyComments(replyComments);
+        }
+        //应该返回带有子评论的  所有顶级评论
+        List<Comment> comments = eachComment(commentList);
+        for(Comment comment :comments){
+            List<Comment> replyComments = ListUtils.removeDuplicate(comment.getReplyComments());
+            comment.setReplyComments(replyComments);
+            for(Comment reply:replyComments){
+
+                Comment parentComment = commentMapper.selectParentComment(reply.getId());
+                reply.setParentComment(parentComment);
+            }
+        }
+        wrapper.clear();
+        return comments;
     }
-    @Transactional
+
     @Override
     public Comment saveComment(Comment comment) {
         Long parentCommentId = comment.getParentComment().getId();
         if(parentCommentId != -1){
-            comment.setParentComment(commentRepository.findById(parentCommentId).get());
+            comment.setParentComment(commentMapper.selectById(parentCommentId));
         }else {
-            comment.setParentComment(null);
+            comment.setParentCommentId(null);
         }
         comment.setCreateTime(new Date());
-        return commentRepository.save(comment);
+        commentMapper.insert(comment);
+        return comment;
     }
 
 
@@ -50,13 +74,15 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     private List<Comment> eachComment(List<Comment> comments) {
+        //创建一个新的集合存放，不改变原数据
         List<Comment> commentsView = new ArrayList<>();
         for (Comment comment : comments) {
+            //循环传来的集合，将原数组的元素拷贝到新集合中
             Comment c = new Comment();
             BeanUtils.copyProperties(comment,c);
             commentsView.add(c);
         }
-        //合并评论的各层子代到第一级子代集合中
+        //合并  评论的各层子代到第一级子代集合中
         combineChildren(commentsView);
         return commentsView;
     }
@@ -67,8 +93,9 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     private void combineChildren(List<Comment> comments) {
-
+        //循环这个集合
         for (Comment comment : comments) {
+            //2和3
             List<Comment> replys1 = comment.getReplyComments();
             for(Comment reply1 : replys1) {
                 //循环迭代，找出子代，存放在tempReplys中
@@ -90,17 +117,23 @@ public class CommentServiceImpl implements CommentService {
      */
     private void recursively(Comment comment) {
         tempReplys.add(comment);//顶节点添加到临时存放集合
+        List<Comment> comments = commentMapper.selectReplyComments(comment.getId(),comment.getBlogId());
+        comment.setReplyComments(comments);
         if (comment.getReplyComments().size()>0) {
+            //如果有子代，就获取到，继续循环
             List<Comment> replys = comment.getReplyComments();
             for (Comment reply : replys) {
+                List<Comment> comment2 = commentMapper.selectReplyComments(reply.getId(),comment.getBlogId());
+                reply.setReplyComments(comment2);
+                //将该子代加入暂存区
                 tempReplys.add(reply);
+                //如果还有，继续递归迭代
                 if (reply.getReplyComments().size()>0) {
                     recursively(reply);
                 }
             }
         }
     }
-
 
 
 }

@@ -28,6 +28,9 @@
                 <div class="item c ">
                     <i class="eye icon"></i> <span th:text="${blog.view}">10w+</span>
                 </div>
+                <div id="star" onclick="starBlog()" style="cursor:pointer" class="item c ">
+                    <i class="star icon"></i> 收藏
+                </div>
             </div>
         </div>
 
@@ -77,8 +80,8 @@
             </div>
         </div>
         <!--首图-->
-        <div class="ui ct attached segment">
-            <img th:src="@{${blog.firstPicture}}" alt="图片走丢了QWQ。"
+        <div  class="ui ct attached segment">
+            <img style="margin: 0 auto;" th:src="@{${blog.firstPicture}}" alt="图片走丢了QWQ。"
                  class="ui rounded image">
         </div>
         <!--博客版权-->
@@ -90,10 +93,9 @@
                         <li>作者：<span th:utext="${blog.user.nickname}"></span> [<a th:href="@{/profile}">联系作者</a>]
                         </li>
                         <li>发表时间：<span th:text="${#dates.format(blog.updateTime,'yyyy-MM-dd HH:mm')}"></span></li>
-                        <li>版权声明：自由转载-非商用-保持署名（创意共享3.0许可证）</li>
+                        <li>版权声明：自由转载-非商用-保持署名</li>
                         <li>
-                            <公众号转></公众号转>
-                            载：请在文末添加作者公众号二维码
+                            转载或引用本网内容必须是以新闻性或资料性公共免费信息为使用目的的合理、善意引用，不得对本网内容原意进行曲解、修改，同时必须保留本网注明的"稿件来源"，并自负版权等法律责任。
                         </li>
 
                     </ul>
@@ -177,7 +179,7 @@
                         </div>
                     </div>
                     <div class="field  m-margin-bottom-small m-mobile-wide">
-                        <button id="commentpost-btn" type="button" class="ui teal button m-mobile-wide"><i class="edit icon"></i>发布</button>
+                        <button id="commentpost-btn" type="button" class="ui m_t_bc_color_theme button m-mobile-wide"><i class="edit icon"></i>发布</button>
                     </div>
                 </div>
 
@@ -243,12 +245,29 @@
     $('.menu.toggle').click(function () {
         $('.m_item').toggleClass('m_mobile_hide');
     });
-    /*弹出答案*/
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
-    });
+
+    function starBlog(){
+        var flag1 = '<i class="orange star icon"></i> 已收藏';
+        var flag2 = '<i class="star icon"></i> 收藏';
+        if( $("#star").html() == flag1){
+
+            //取消收藏
+            $("#star").html(flag2)
+
+        }else{
+            //收藏
+            $("#star").html(flag1)
+            $.ajax({
+                url: "/blog/admin/addStar",
+                data: {
+                    id:[[${blog.id}]]
+                },
+                type: "post",
+                success: function () {
+                }
+            })
+        }
+    }
     /*关灯 、开灯功能*/
     /*关灯按钮*/
     var cl = $(".close-light")
@@ -319,6 +338,7 @@
     $(function () {
         $("#comment-container").load(/*[[@{/comments/{id}(id=${blog.id})}]]*/);
     });
+    //发布评论
     $('#commentpost-btn').click(function () {
         var boo = $('.ui.form').form('validate form');
         if (boo) {
@@ -329,6 +349,16 @@
         }
 
     });
+
+    //点击回复
+    function reply(obj) {
+        var commentId = $(obj).data('commentid');
+        var commentNickname = $(obj).data('commentnickname');
+        $("[name='content']").attr("placeholder", "@"+commentNickname).focus();
+        $("[name='parentComment.id']").val(commentId);
+        $(window).scrollTo($('#comment-form'),300);
+    }
+
     function postData() {
         $("#comment-container").load(/*[[@{/comments}]]*/"",{
             "parentComment.id" : $("[name='parentComment.id']").val(),
@@ -346,13 +376,7 @@
         $("[name='parentComment.id']").val(-1);
         $("[name='content']").attr("placeholder", "请输入评论信息...");
     }
-    function reply(obj) {
-        var commentId = $(obj).data('commentid');
-        var commentNickname = $(obj).data('commentnickname');
-        $("[name='content']").attr("placeholder", "@"+commentNickname).focus();
-        $("[name='parentComment.id']").val(commentId);
-        $(window).scrollTo($('#comment-form'),300);
-    }
+
 
 
 

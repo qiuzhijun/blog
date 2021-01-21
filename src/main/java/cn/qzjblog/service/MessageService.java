@@ -1,6 +1,6 @@
 package cn.qzjblog.service;
 
-import cn.qzjblog.po.Message;
+import cn.qzjblog.entity.Message;
 
 import java.util.List;
 

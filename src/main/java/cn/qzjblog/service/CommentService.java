@@ -1,6 +1,6 @@
 package cn.qzjblog.service;
 
-import cn.qzjblog.po.Comment;
+import cn.qzjblog.entity.Comment;
 
 import java.util.List;
 

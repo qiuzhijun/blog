@@ -1,7 +1,8 @@
 package cn.qzjblog.web.admin;
 
-import cn.qzjblog.po.User;
+import cn.qzjblog.entity.User;
 import cn.qzjblog.service.UserService;
+import cn.qzjblog.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/admin")
 public class LoginController {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     //登陆方法
     @PostMapping("/login")
@@ -39,7 +40,7 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
-        return "redirect:/index";
+        return "redirect:/";
     }
 
 

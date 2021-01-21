@@ -20,7 +20,7 @@
                 </div>
                 <!--篇数字样-->
                 <div class="right aligned column">
-                    共 <h3 th:text="${#arrays.length(tags)} " class="ui orange header m_inline_block">10</h3> 个
+                    共 <h3 th:text="${tags.size()} " class="ui orange header m_inline_block">10</h3> 个
                 </div>
             </div>
         </div>
@@ -28,13 +28,13 @@
         <div  class="ui ct attached  segment">
             <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${tags}" th:classappend="${tag.id==activeTagId} ? 'orange'" class="ui large m_margin_tag m_padded_mini basic label">
                 <span th:text="${tag.name}" >JavaSE</span>
-                <div class="detail" th:text="${#arrays.length(tag.blog)}">23</div>
+                <div class="detail" th:text="${tag.count}">23</div>
             </a>
         </div>
 
 
         <div class="ui animated fadeIn ct attached black segment ">
-            <div th:each="blog : ${page.content}" class="ui attached  ct  segment">
+            <div th:each="blog : ${page.getRecords()}" class="ui attached  ct  segment">
                 <!--文章部分-->
                 <div class="ui middle aligned mobile reversed stackable grid">
                     <!--左边文章部分-->
@@ -67,12 +67,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--右边的标签，位置靠右-->
-                            <div class="right aligned five wide column">
-                                <!--设置蓝色透明标签-->
-                                <a th:text="${blog.type.name}" href="#" target="_blank"
-                                   class="ui m_padded_mini m_text_thin basic violet label">励志</a>
-                            </div>
                             <div class="row">
                                 <div class="column">
                                     <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${blog.tags}"
@@ -94,18 +88,19 @@
                     </div>
                 </div>
             </div>
-
-            <div class="ui ct attached bottom segment">
-                <div th:if="${page.totalPages>1}" class="ui middle aligned two column grid">
+            <div th:if="${(page.getTotal)-(page.getSize())>=1}"  class="ui ct attached bottom segment">
+                <div  class="ui middle aligned two column grid">
                     <!--上一页-->
                     <div class="column">
-                        <a th:href="@{/(page=${page.number}-1)}" th:unless="${page.first}"
-                           class="ui basic blue mini button">上一页</a>
+                        <a th:href="@{'/tags/'+${activeTagId}(current=${page.getCurrent()}-1)}"
+                           th:unless="${page.getCurrent eq 1}"
+                           class="ui basic violet mini button">上一页</a>
                     </div>
                     <!--下一页-->
                     <div class="right aligned column">
-                        <a th:href="@{/(page=${page.number}+1)}" th:unless="${page.last}"
-                           class="ui basic blue mini button">下一页</a>
+                        <a  th:href="@{'/tags/'+${activeTagId}(current=${page.getCurrent()}+1)}"
+                            th:unless="${page.getCurrent() eq lastPage}"
+                            class="ui basic violet mini button">下一页</a>
                     </div>
                 </div>
             </div>
@@ -138,12 +133,6 @@
     $('.menu.toggle').click(function () {
         $('.m_item').toggleClass('m_mobile_hide');
     });
-    /*弹出答案*/
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
-    });
     /*关灯 、开灯功能*/
     /*关灯按钮*/
     var cl = $(".close-light")
@@ -170,9 +159,10 @@
             $(".plcon").removeClass("m_t_bc_color_gd");
         }
     });
+
     /*生成二维码*/
     var qrcode = new QRCode("qrcode", {
-        text: "http://www.runoob.com",
+        text: "http://qzjblog.cn/blog/tags",
         width: 90,
         height: 90,
         colorDark: "#BA55D3",

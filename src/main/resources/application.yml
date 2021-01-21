@@ -6,7 +6,14 @@ spring:
     mode: HTML
   profiles:
     active: dev
+  servlet:
+    multipart:
+      max-file-size: 10MB
 server:
   servlet:
     context-path: /blog
-comment.avatar: /images/访客头像.jpg
+comment.avatar: /images/boy.png
+#打印sql语句
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

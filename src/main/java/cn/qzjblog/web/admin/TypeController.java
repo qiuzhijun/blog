@@ -1,11 +1,9 @@
 package cn.qzjblog.web.admin;
 
-import cn.qzjblog.po.Type;
-import cn.qzjblog.service.TypeService;
+import cn.qzjblog.entity.Type;
+import cn.qzjblog.service.impl.TypeServiceImpl;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +21,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TypeController {
 
     @Autowired
-    private TypeService service;
+    private TypeServiceImpl service;
 
     @GetMapping("types")
-    //springboot根据前段页面构造好的参数，自动封装好的自动分页方法
-    public String types
-            (@PageableDefault(size = 8,//指定一页放多少数据
-                    sort = {"id"}, //根据什么来排序
-                    direction = Sort.Direction.DESC)//倒序
-                     Pageable pageable, Model model) {
-        model.addAttribute("page", service.listType(pageable));
+    public String types (Integer current, Model model) {
+        Page<Type> page = new Page<>(1,6);
+        if(current != null){
+            page.setCurrent(current);
+        }
+        model.addAttribute("page", service.listType(page));
+        Double num = (double)page.getTotal() / page.getSize();
+        Double pageNum = Math.ceil(num);
+        model.addAttribute("lastPage",pageNum);
         return "adminHtml/types";
     }
 

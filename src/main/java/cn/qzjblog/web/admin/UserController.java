@@ -94,35 +94,34 @@ public class UserController {
 
 
     @PostMapping(value = "/updateAvatar")
-    public String updateAvatar(@RequestParam(value = "file") MultipartFile file, HttpSession session, Model model, HttpServletRequest request) {
+    public String updateAvatar(@RequestParam(value = "file") MultipartFile file,HttpSession session, Model model, HttpServletRequest request) {
         if (file.isEmpty()) {
-            model.addAttribute("msg", "文件不存在");
+            model.addAttribute("msg","文件不存在");
         }
         String fileName = file.getOriginalFilename();  // 文件名
-        if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".bmp"))) {
-            model.addAttribute("msg", "文件类型错误");
+        if(!(fileName.endsWith(".png")||fileName.endsWith(".jpg")||fileName.endsWith(".jpeg")||fileName.endsWith(".bmp"))){
+            model.addAttribute("msg","文件类型错误");
         }
         String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
-                        //http                  ://        localhost          :            8080          /blog        /images/
-
-        String filePath = request.getScheme()+"://"+ request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/static/images/user-avatar/"; // 上传后的路径
+        String filePath = "/images/user-avatar/"; // 上传后的路径
         fileName = UUID.randomUUID() + suffixName; // 新文件名
         File dest = new File(filePath + fileName);
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        User u = (User) session.getAttribute("user");
         try {
             file.transferTo(dest);
             String filename = "/images/user-avatar/" + fileName;
+            User u = (User) session.getAttribute("user");
             u.setAvatar(fileName);
             userService.updateAvatar(u);
             model.addAttribute("filename", filename);
-            model.addAttribute("msg", "传输成功");
+            model.addAttribute("msg","传输成功");
+            model.addAttribute("user",u);
         } catch (IOException e) {
-            model.addAttribute("msg", e.getMessage());
+            model.addAttribute("msg",e.getMessage());
+            return RETURN;
         }
-        model.addAttribute("user", u);
         return RETURN;
     }
 }

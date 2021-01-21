@@ -74,12 +74,6 @@
     $('.menu.toggle').click(function () {
         $('.m_item').toggleClass('m_mobile_hide');
     });
-    /*弹出答案*/
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
-    });
     /*关灯 、开灯功能*/
     /*关灯按钮*/
     var cl = $(".close-light")
@@ -101,7 +95,7 @@
     });
     /*生成二维码*/
     var qrcode = new QRCode("qrcode", {
-        text: "http://www.runoob.com",
+        text: "http://qzjblog.cn/blog/archives",
         width: 90,
         height: 90,
         colorDark: "#BA55D3",

@@ -28,10 +28,11 @@
             <h2 class="ui header item m_t_color_name">Caelum_Blog</h2>
             <!--创建普通项-->
                 <a class="m_item m_mobile_hide item" th:classappend="${n==1} ? 'active'" th:href="@{/admin/blogs}"><i class="small list icon"></i>博客管理</a>
-                <a class="m_item m_mobile_hide item" th:classappend="${n==2} ? 'active'" th:href="@{/admin/types}"><i class="small idea icon"></i>分类</a>
-                <a class="m_item m_mobile_hide item" th:classappend="${n==3} ? 'active'" th:href="@{/admin/tags}"><i class="small tags icon"></i>标签</a>
+                <a class="m_item m_mobile_hide item" th:classappend="${n==2} ? 'active'" th:href="@{/admin/types}"><i class="small idea icon"></i>分类管理</a>
+                <a class="m_item m_mobile_hide item" th:classappend="${n==3} ? 'active'" th:href="@{/admin/tags}"><i class="small tags icon"></i>标签管理</a>
                 <a class="m_item m_mobile_hide item" th:classappend="${n==4} ? 'active'" th:href="@{/admin/add}"><i class="small edit icon"></i>写博客</a>
-                <a class="m_item m_mobile_hide item" th:classappend="${n==5} ? 'active'" th:href="@{/index}"><i class="small home icon"></i>返回首页</a>
+                <a class="m_item m_mobile_hide item" th:classappend="${n==5} ? 'active'" th:href="@{/admin/profile}"><i class="small user icon"></i>个人中心</a>
+                <a class="m_item m_mobile_hide item" th:classappend="${n==6} ? 'active'" th:href="@{/}"><i class="small home icon"></i>返回首页</a>
             <div class="right m-item m-mobile-hide menu">
                 <div class="ui dropdown  item">
                     <div  class="text">
@@ -41,6 +42,7 @@
                     <i class="dropdown icon"></i>
                     <div class="right-last m-item m-mobile-hide menu">
                         <a th:href="@{/admin/blogs}" class="item">管理博客</a>
+                        <a th:href="@{/admin/profile}" class="item">个人中心</a>
                         <a th:href="@{/admin/logout}" class="item">注销</a>
                     </div>
                 </div>
@@ -57,59 +59,58 @@
 
 
 <footer th:fragment="footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_small">
-    <!--创建容器 所有元素居中-->
     <div class="ui center aligned container">
-        <!--将容器布局，分为16份，在每个div间加入竖线-->
-        <div class="ui inverted divided stackable grid">
-            <!--三份的列宽-->
-            <div class="three wide column">
-                <!--插入  圆角  图片-->
-                <div class="ui inverted link list">
-                    <div class="item">
-                        <img class="ui rounded image" style="width: 110px" alt="图片走丢了QWQ。"
-                             th:src="@{/images/wechat.png}">
+        <!--    &lt;!&ndash;将容器布局，分为16份，在每个div间加入竖线&ndash;&gt;
+            <div class="ui inverted divided stackable grid">
+                &lt;!&ndash;三份的列宽&ndash;&gt;
+                <div class="three wide column">
+                    &lt;!&ndash;插入  圆角  图片&ndash;&gt;
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <img class="ui rounded image" style="width: 110px" alt="图片走丢了QWQ。"
+                                 th:src="@{/images/wechat.png}">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="three wide column">
-                <div class="ui inverted link list">
-                    <h4 class="ui inverted header">每日一题</h4><br>
-                    <p class="item ">是先有鸡还是先有蛋？</p>
-                    <button id="answer" class="ui mini m_t_color_bottom m_t_bc_color_bottom   circular button">查看答案
-                    </button>
-                    <div class="ui checkAnswer flowing popup  transition hidden">
-                        这是一个哲学的问题，按照正常定义指可以孵出鸡来的蛋也不一定就是先有蛋，根据表观遗传学生物可能在出生时为其它物种，但在后面进化为某种物种（具有遗传性）。
+                <div class="three wide column">
+                    <div class="ui inverted link list">
+                        <h4 class="ui inverted header">每日一题</h4><br>
+                        <p class="item ">是先有鸡还是先有蛋？</p>
+                        <button id="answer" class="ui mini m_t_color_bottom m_t_bc_color_bottom   circular button">查看答案
+                        </button>
+                        <div class="ui checkAnswer flowing popup  transition hidden">
+                            这是一个哲学的问题，按照正常定义指可以孵出鸡来的蛋也不一定就是先有蛋，根据表观遗传学生物可能在出生时为其它物种，但在后面进化为某种物种（具有遗传性）。
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="three wide column">
-                <div class="ui inverted link list">
-                    <h4 class="inverted header ui">联系我</h4><br>
-                    <p class="item m_opacity_mini" th:text="#{index.qq}"></p>
-                    <p class="item m_opacity_mini" th:text="#{index.wx}"></p>
+                <div class="three wide column">
+                    <div class="ui inverted link list">
+                        <h4 class="inverted header ui">联系我</h4><br>
+                        <p class="item m_opacity_mini" th:text="#{index.qq}"></p>
+                        <p class="item m_opacity_mini" th:text="#{index.wx}"></p>
 
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <div class="ui inverted link list">
+                        <h4 class="inverted header ui">博客简介</h4><br>
+                        <p class="m_opacity_mini item">博客命名为Cealum，此单词有天空、月光之意。希望大家都能在这</p>
+                        <p class="m_opacity_mini item">偌大的互联网中找到属于自己安静的一隅。</p>
+                    </div>
                 </div>
             </div>
-            <div class="seven wide column">
-                <div class="ui inverted link list">
-                    <h4 class="inverted header ui">博客简介</h4><br>
-                    <p class="m_opacity_mini item">博客命名为Cealum，此单词有天空、月光之意。希望能在这</p>
-                    <p class="m_opacity_mini item">偌大的互联网中找到属于自己安静的一隅。</p>
-                </div>
-            </div>
-        </div>
-        <!--在页面底部增加一条横线-->
-        <div class="ui inverted section divider"></div>
+            &lt;!&ndash;在页面底部增加一条横线&ndash;&gt;
+            <div class="ui inverted section divider"></div>-->
         <!--加入底部版权说明-->
-        <p class="m_opacity_very_mini m_text_spaced">Copyright © 2020 Qiuzhijun All rights reserved</p>
+        <p class=" m_black ">公安备案号：鲁ICP备2021002005号-1</p>
     </div>
 
 </footer>
 <th:block th:fragment="script">
-    <script th:src="@{/Semantic-UI-2.4.1/examples/assets/library/jquery.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <script th:src="@{/Semantic-UI-2.4.1/dist/semantic.min.js}"></script>
-    <script th:src="@{/lib/line.js}" color="0,255,210" opacity="0.8"
-            count="300" ></script>
+  <!--  <script th:src="@{/lib/line.js}" color="0,255,210" opacity="0.8"
+            count="300" ></script>-->
 </th:block>
 </body>
 </html>

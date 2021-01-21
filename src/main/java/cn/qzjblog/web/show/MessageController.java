@@ -1,6 +1,6 @@
 package cn.qzjblog.web.show;
 
-import cn.qzjblog.po.Message;
+import cn.qzjblog.entity.Message;
 import cn.qzjblog.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

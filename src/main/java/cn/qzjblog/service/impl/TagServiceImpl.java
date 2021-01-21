@@ -1,15 +1,13 @@
 package cn.qzjblog.service.impl;
 
-import cn.qzjblog.dao.TagRepository;
+import cn.qzjblog.entity.Tag;
+import cn.qzjblog.mapper.TagMapper;
 import cn.qzjblog.myException.NotFoundException;
-import cn.qzjblog.po.Tag;
 import cn.qzjblog.service.TagService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,45 +21,52 @@ import java.util.List;
 @Service
 public class TagServiceImpl implements TagService {
     @Autowired
-    private TagRepository repository;
+    private TagMapper tagMapper;
+    @Autowired
+    private QueryWrapper wrapper;
 
     @Override
     public List<Tag> listTag() {
-        return repository.findAll();
+        return tagMapper.selectList(null);
     }
 
     @Transactional
     @Override
     public Tag saveTag(Tag tag) {
-        return repository.save(tag);
+        tagMapper.insert(tag);
+        return tag;
     }
 
     @Transactional
     @Override
     public Tag updateTag(Long id, Tag tag) {
-        Tag t = repository.findById(id).get();
+        Tag t = tagMapper.selectById(id);
         if (t == null) {
             throw new NotFoundException("不存在该类型");
         }
         BeanUtils.copyProperties(tag, t);
-        return repository.save(tag);
+        tagMapper.insert(tag);
+        return tag;
     }
 
     @Override
     public Tag getTagByName(String name) {
-        return repository.findByName(name);
+        wrapper.eq("name",name);
+        Tag tag = tagMapper.selectOne(wrapper);
+        wrapper.clear();
+        return tag;
     }
 
     @Transactional
     @Override
     public Tag getTag(Long id) {
-        return repository.findById(id).get();
+        return tagMapper.selectById(id);
     }
 
     @Override
     public List<Tag> listTag(String ids) {
         //根据id集合获取对象
-        return repository.findAllById(convertToList(ids));
+        return tagMapper.selectBatchIds(convertToList(ids));
     }
 
     //字符串转换为数组
@@ -78,20 +83,25 @@ public class TagServiceImpl implements TagService {
 
     @Transactional
     @Override
-    public Page<Tag> listTag(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Tag> listTag(Page<Tag> page) {
+        QueryWrapper<Tag> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("id");
+        Page<Tag> page1 = tagMapper.selectPage(page, wrapper);
+        wrapper.clear();
+        return page1;
     }
 
     @Transactional
     @Override
     public void deleteTag(Long id) {
-        repository.deleteById(id);
+        tagMapper.deleteById(id);
     }
 
+    //展示排名前几名的tag，返回一个列表
     @Override
     public List<Tag> listTagTop(Integer size) {
-        Sort sort = Sort.by(Sort.Direction.DESC,"blog.size");
-        Pageable pageable = PageRequest.of(0,size,sort);
-        return repository.findTop(pageable);
+        List<Tag> list = tagMapper.findTop(size);
+        return list;
     }
+
 }

@@ -1,9 +1,9 @@
 package cn.qzjblog.service;
 
-import cn.qzjblog.po.Blog;
+import cn.qzjblog.entity.Blog;
+import cn.qzjblog.entity.User;
 import cn.qzjblog.vo.BlogQuery;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  * Create by qzj on 2020/12/17 15:44
  **/
 public interface BlogService {
-    Page<Blog> listBlog(Pageable pageable);
+    Page<Blog> listBlog(Page<Blog> page);
 
     Blog getAndConvert(Long id);
 
@@ -20,13 +20,15 @@ public interface BlogService {
 
     Blog getBlogById(Long id);
 
-    Map<String,List<Blog>> archiveBlog();
+    Map<String, List<Blog>> archiveBlog();
 
-    Long countBlog();
+    Integer countBlog();
 
-    Page<Blog> listBlog(Pageable pageable, BlogQuery blog);
+    Page<Blog> listBlog(Page<Blog> page, BlogQuery blog, User user);
 
-    Page<Blog> listBlog(Pageable pageable, Long tagId);
+    User selectUser(Long blogId);
+
+    Page<Blog> listBlog(Page<Blog> page, Long tagId);
 
     Blog saveBlog(Blog blog);
 
@@ -34,5 +36,5 @@ public interface BlogService {
 
     void deleteBlog(Long id);
 
-    Page<Blog> listBlogByQuery(String query, Pageable pageable);
+    Page<Blog> listBlogByQuery(String query, Page<Blog> page);
 }

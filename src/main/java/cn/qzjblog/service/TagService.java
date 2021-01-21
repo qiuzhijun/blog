@@ -1,8 +1,7 @@
 package cn.qzjblog.service;
 
-import cn.qzjblog.po.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import cn.qzjblog.entity.Tag;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 
@@ -21,8 +20,7 @@ public interface TagService {
     Tag getTag(Long id);
 
     List<Tag> listTag(String ids);
-    Page<Tag> listTag(Pageable pageable);
-
+    Page<Tag> listTag(Page<Tag> page);
     void deleteTag(Long id);
 
     List<Tag> listTagTop(Integer size);

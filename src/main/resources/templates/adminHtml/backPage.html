@@ -16,7 +16,7 @@
     <div class="ui  container">
         <!--顶部搜索、分类-->
         <div class="ui c2 rounded attached form  segment secondary">
-            <input type="hidden" name="page">
+            <input type="hidden" name="current">
             <div class=" inline fields">
                 <div class=" field">
                     <input type="text" name="title" placeholder="请输入标题……">
@@ -67,7 +67,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="blog,iterStat : ${page.content}" align="center">
+                <tr th:each="blog,iterStat : ${page.getRecords()}" align="center">
                     <td th:text="${iterStat.count}">1</td>
                     <td th:text="${blog.title}"><a href="#" style="color: black">活着不是为了活着</a></td>
                     <td th:text="${blog.type.name}"><a href="#" style="color: black">笔记</a></td>
@@ -85,12 +85,12 @@
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="6" th:if="${page.totalPages>1}">
-                        <div class="ui  pagination menu">
-                            <a onclick="page(this)" th:attr="data-page=${page.number}-1" th:unless="${page.first}"
+                    <th th:if="${(page.getTotal)-(page.getSize())>=1}" colspan="7">
+                       <div   class="ui  pagination menu">
+                            <a onclick="page(this)" th:attr="data-current=${page.getCurrent()}-1" th:unless="${page.hasNext()}"
                                class=" item">上一页</a>
-                            <a onclick="page(this)" th:attr="data-page=${page.number}+1" class=" item"
-                               th:unless="${page.last}">下一页</a>
+                            <a onclick="page(this)" th:attr="data-current=${page.getCurrent()}+1" class=" item"
+                               th:unless="${page.getCurrent() eq lastPage}">下一页</a>
                         </div>
                     </th>
                 </tr>
@@ -112,7 +112,7 @@
 
 
 <!--底部-->
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
@@ -121,7 +121,7 @@
 <script>
 
     function page(obj) {
-        $("[name='page']").val($(obj).data('page'));
+        $("[name='current']").val($(obj).data('current'));
         loaddata();
     }
 
@@ -130,20 +130,13 @@
     })
 
     function loaddata() {
-        $("#table-container").load(/*[[@{/admin/search}]]*/"/admin/search", {
+        $("#table-container").load(/*[[@{/admin/search}]]*/"/blog/admin/search", {
             title: $("[name='title']").val(),
             typeId: $("[name='typeId']").val(),
             recommended: $("[name='recommended']").prop('checked'),
-            page: $("[name='page']").val()
+            current: $("[name='current']").val()
         });
     }
-
-    /*弹出答案*/
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
-    });
 
 
     $('.ui.dropdown').dropdown({

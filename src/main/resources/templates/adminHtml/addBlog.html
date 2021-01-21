@@ -63,12 +63,12 @@
                 <div   class="field required ">
                     <div class="ui left labeled action input">
                         <label class="ui compact blue basic  label">标签</label>
-                        <div class="ui fluid selection multiple search dropdown">
+                        <div class="ui  selection fluid dropdown multiple search ">
                             <input type="hidden" name="tagIds" th:value="*{tagIds}">
                             <i class="dropdown icon"></i>
                             <div class="default text">请选择标签（可多选）</div>
                             <div  class="menu">
-                                <div  th:each="tag : ${tags}" th:text="${tag.name}" th:data-value="${tag.id}" class="item">java</div>
+                                <div th:each="tag : ${tags}" th:text="${tag.name}" th:data-value="${tag.id}"  class="item">java</div>
                             </div>
                         </div>
                     </div>
@@ -135,7 +135,7 @@
 <!--底部footer-->
 <!--创建 无留空 片段 -->
 <br/><br/><br/>
-<script th:src="@{/Semantic-UI-2.4.1/examples/assets/library/jquery.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 <script th:src="@{/lib/editormd/editormd.min.js}"></script>
@@ -153,12 +153,6 @@
             path: "/../blog/lib/editormd/lib/"
         });
 
-    });
-    //弹出答案
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
     });
     //注销
     $('.ui.dropdown').dropdown({

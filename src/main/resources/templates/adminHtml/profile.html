@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <title>Cealum博客-个人中心</title>
+</head>
+<style type="text/css">
+    td {
+        width: 180px;
+    }
+
+    .content > div.img_container {
+        position: relative;
+        padding: 0;
+        height: 100px;
+    }
+
+    .s1 {
+        position: absolute;
+        display: none;
+    }
+
+    .img_container .img_in {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.5;
+    filter(alpha = 1);
+        box-shadow: 10px 10px 10px rgba(0, 0, 0, .5);
+    }
+
+    .img_container .img_out {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 1;
+    filter(alpha = 100) box-shadow: 10 px 10 px 10 px rgba(0, 0, 0, .5);
+    }
+
+    #header {
+        width: 100px;
+        position: relative;
+    }
+
+    #header a {
+        position: absolute;
+        top: 40px;
+        right: 30px;
+        color: #30f8ce;
+    }
+
+</style>
+<body style="min-width: 1200px">
+
+<nav th:replace="adminHtml/_fragments :: menu(5)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+</nav>
+<div class="m_padded_tb_big m_container">
+    <div class="ui  container">
+        <div style="margin: 0 auto; width: 120px; position: fixed; left:80px;top:120px;">
+            <div class="ui  fluid ">
+                <div class="ui label big m_t_bc_color_theme toOne" id="p1"
+                     style="width: 100%;text-align: center;cursor: pointer;">
+                    <span class="m_black">个人资料</span>
+                </div>
+            </div>
+            <div class="ui  fluid m_margin_top_small ">
+                <div class="ui label big toTwo" id="p2" style="width: 100%;text-align: center;cursor: pointer;">
+                    <span class="m_black">账号设置</span>
+                </div>
+            </div>
+            <div class="ui  fluid m_margin_top_small ">
+                <div class="ui label big toThree" id="p3" style="width: 100%;text-align: center;cursor: pointer;">
+                    <span class="m_black">我的收藏</span>
+                </div>
+            </div>
+            <div class="ui  fluid m_margin_top_small ">
+                <div class="ui label big toFour" id="p4" style="width: 100%;text-align: center;cursor: pointer;">
+                    <span class="m_black">我的评论</span>
+                </div>
+            </div>
+        </div>
+        <div id="info" class="m_padded_left_right_responsive">
+            <div class="ui  fluid">
+                <div class="ui segment m_padded_tb1">
+                    <div class="content">
+                        <div class="img_container">
+                            <div class="ui grid">
+                                <div class="two wide column">
+                                    <div id="header">
+                                        <img class="img_out" th:src="@{${session.user.avatar}}" onmouseover="show()"
+                                             onmouseout="dis()">
+                                        <a href="javascript:void(0)" onmouseover="show()" onmouseout="dis()" class="s1"><i
+                                                class="m_t_color_theme big camera icon"></i></a>
+                                        <div th:text="${msg}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="three wide column">
+                                    <div style="font-size: 30px;height:140px;text-align:center;
+                                    display: table-cell;
+                                    vertical-align:middle" th:text="${user.nickname}">用户姓名
+                                    </div>
+                                </div>
+                                <div class="eleven wide column"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div id="one" class="ui segment ">
+                <div class="ui header m_font_big">个人资料</div>
+                <table class="ui table">
+                    <tr>
+                        <td>邮箱:</td>
+                        <td th:text="${user.email}">1185538241@qq.com</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>昵称:</td>
+                        <td th:text="${user.nickname}">不动声色</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>性别:</td>
+                        <td id="sex" th:text="${user.sex}">男</td>
+                        <td style="text-align: right"><a onclick="updateSex()" href="javascript:void(0)"><i
+                                class="small edit icon"></i>更改</a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>当前级别:</td>
+                        <td th:text="${user.type}">普通用户</td>
+                        <td style="text-align: right"><a th:if="${user.type} eq '普通用户'" onclick="upAccount()"
+                                                         href="javascript:void(0)"><i
+                                class="small arrow alternate circle up icon"></i>升级</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="two" class="ui segment ">
+                <div class="ui header m_font_big">账号设置</div>
+                <table class="ui table">
+                    <tr>
+                        <td>昵称:</td>
+                        <td><font id="name" th:text="${user.nickname}">不动声色</font></td>
+                        <td style="text-align: right"><a id="update_nickname" href="javascript:void(0)"><i
+                                class="small edit icon"></i>修改</a></td>
+                    </tr>
+                    <tr>
+                        <td>密码:</td>
+                        <td><font id="password">******</font></td>
+                        <td style="text-align: right"><a id="update_password" href="javascript:void(0)"><i
+                                class="small edit icon"></i>修改</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="three" class="ui segment ">
+                <div class="ui header m_font_big">我的收藏</div>
+                <table class="ui table">
+                    <tr th:each="blog : ${blogs}"><!--循环这个tr-->
+                        <td><a th:href="@{/blog/{id}(id=${blog.id})}">《<span th:text="${blog.title}">文章列表</span>》</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="four" class="ui segment ">
+                <div class="ui header m_font_big">我的评论</div>
+                <table th:each="table : ${tables}" class="ui table">
+                    <tr>
+                        <td class="artical"><a th:href="@{/blog/{id}(id=${table.id})}">《<span th:text="${table.title}">文章名</span>》</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td th:text="${table.content}" class="comment">真好</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="avatarModal" class="ui mini modal">
+
+    <i class="close icon"></i>
+    <div class="header">
+        添加文件
+    </div>
+    <div class="image content">
+        <form th:action="@{/admin/updateAvatar}" method="post" enctype="multipart/form-data">
+            <div class="ui small image">
+                <img th:src="@{${user.avatar}}">
+                <div class="ui input focus">
+                    <input type="file" class="ui input" name="file"/>
+                </div>
+            </div>
+            <button type="submit" class="ui  icon button">
+                上传
+                <i class="checkmark icon"></i>
+            </button>
+        </form>
+    </div>
+
+
+</div>
+
+
+<div id="modal" class="ui modal">
+    <div class="header">请联系管理员升级</div>
+    <div class="image content">
+        <img class="image" width="300px" th:src="@{/images/wechat.png}">
+        <div class="description">
+            <p>此网站为个人网站</p>
+            <p>管理员有权限操作所有数据</p>
+            <p>如果有此需要，可加微信联系站主</p>
+            <p>期待大家的加入，让此网站变得越来越好！</p><br><br>
+            <p style="font-weight: 20">*作为一个真正的程序员,首先应该尊重编程,他是你的伙伴,而不是工具*</p>
+            <p style="font-weight: 20">*程序员之所以犯错误，不是因为他们不懂，而是因为他们自以为什么都懂*</p>
+        </div>
+    </div>
+</div>
+
+<!--底部-->
+<br/><br/><br/>
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
+</footer>
+<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+
+<script>
+    var regExp = /^.{2,8}$/
+    var psdReg = /^(?![^a-zA-Z]+$)(?!\D+$)[0-9a-zA-Z]{6,16}$/;
+
+    function dis() {
+        $(".s1").css('display', 'none');
+        $(".img_in").attr("class", "img_out");
+    }
+
+    function show() {
+        $(".s1").css('display', 'block');
+        $(".img_out").attr("class", "img_in");
+    }
+
+    $(".s1").click(function () {
+        $('#avatarModal').modal('show');
+    })
+
+    $(".toOne").click(function () {
+        $(window).scrollTo("#one", 500);
+    })
+    $(".toTwo").click(function () {
+        $(window).scrollTo("#two", 500);
+    })
+    $(".toThree").click(function () {
+        $(window).scrollTo("#three", 500);
+    })
+    $(".toFour").click(function () {
+        $(window).scrollTo("#four", 500);
+    })
+
+
+    $('.ui.dropdown').dropdown({
+        on: 'hover'
+    });
+
+    function upAccount() {
+        $('#modal')
+            .modal('show')
+        ;
+    }
+
+    $("#update_password").click(function () {
+        $("#password").html("<div class='ui input focus'>"
+            + "<input type='text' id='update_password' onblur='inputPassword()' style='height: 30px'  name='password' placeholder='6-16的英文数字混合'>" +
+            "</div>");
+        $("#update_password").focus();
+    })
+
+    function inputPassword() {
+        var password = $("#update_password").val();
+        if (psdReg.test(password)) {
+            $.ajax({
+                url: "updatePassword",
+                data: {
+                    password: $("#update_password").val()
+                },
+                type: "post",
+                dateType: "json",
+                success: function (resp) {
+                    if (resp.password === undefined) {
+                        alert("修改失败")
+                        $("#update_password").text(content);
+                    } else {
+                        alert("修改成功")
+                        window.location.reload();
+                    }
+                }
+            })
+        } else {
+            alert("昵称不合法")
+        }
+    }
+
+
+    $("#update_nickname").click(function () {
+        $("#name").html("<div class='ui input focus'>"
+            + "<input type='text' id='update_nickname' onblur='input()' style='height: 30px'  name='nickname' placeholder='昵称2~8个字符'>" +
+            "</div>");
+        $("#update_nickname").focus();
+    })
+
+    function input() {
+        var name = $("#update_nickname").val();
+        if (regExp.test(name)) {
+            $.ajax({
+                url: "updateNickname",
+                data: {
+                    name: $("#update_nickname").val()
+                },
+                type: "post",
+                dateType: "json",
+                success: function (resp) {
+                    if (resp.nickname === undefined) {
+                        alert("修改失败")
+                        $("#update_nickname").text(content);
+                    } else {
+                        alert("修改成功")
+                        window.location.reload();
+                    }
+                }
+            })
+        } else {
+            alert("密码不合法")
+        }
+    }
+
+    updateSex = function () {
+        $("#sex").html("<span onclick='chooseMan()' id='man' style='cursor: pointer' class='ui m_t_bc_color_theme  label' >男</span>&nbsp;&nbsp;&nbsp;&nbsp;"
+            + "<span style='cursor: pointer' onclick='chooseWoman()' id='woman' class='ui m_t_bc_color_theme  label'>女</span>");
+
+    }
+    chooseMan = function () {
+        $.ajax({
+            url: "updateSex",
+            data: {
+                sex: $("#man").text()
+            },
+            type: "post",
+            dateType: "json",
+            success: function () {
+                window.location.reload()
+            }
+        })
+
+    }
+    chooseWoman = function () {
+        $.ajax({
+            url: "updateSex",
+            data: {
+                sex: $("#woman").text()
+            },
+            type: "post",
+            dateType: "json",
+            success: function () {
+                window.location.reload()
+            }
+        })
+    }
+
+
+    $(".label").click(function () {
+        $(".label").removeClass("m_t_bc_color_theme");
+
+    })
+    $("#p1").click(function () {
+        $("#p1").addClass("m_t_bc_color_theme");
+    })
+    $("#p2").click(function () {
+        $("#p2").addClass("m_t_bc_color_theme");
+    })
+    $("#p3").click(function () {
+        $("#p3").addClass("m_t_bc_color_theme");
+    })
+    $("#p4").click(function () {
+        $("#p4").addClass("m_t_bc_color_theme");
+    })
+
+
+</script>
+</body>
+</html>
+
+
+

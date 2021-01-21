@@ -1,12 +1,11 @@
 package cn.qzjblog.web.show;
 
-import cn.qzjblog.service.BlogService;
-import cn.qzjblog.service.TagService;
-import cn.qzjblog.service.TypeService;
+import cn.qzjblog.entity.Blog;
+import cn.qzjblog.service.impl.BlogServiceImpl;
+import cn.qzjblog.service.impl.TagServiceImpl;
+import cn.qzjblog.service.impl.TypeServiceImpl;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,24 +13,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 @Controller
 public class indexController {
     @Autowired
-    private BlogService blogService;
+    private BlogServiceImpl blogService;
     @Autowired
-    private TypeService typeService;
+    private TypeServiceImpl typeService;
     @Autowired
-    private TagService tagService;
-    @GetMapping("/index")
-    public String index(
-            @PageableDefault(size = 6, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-            Model model) {
-        model.addAttribute("page", blogService.listBlog(pageable));
-        model.addAttribute("types",typeService.listTypeTop(6));
+    private TagServiceImpl tagService;
+    @GetMapping("/")
+    public String index(Integer current, Model model) {
+        Page<Blog> page = new Page<>(1,5);
+        if(current != null){
+            page.setCurrent(current);
+        }
+        model.addAttribute("page", blogService.listBlog(page));
+        model.addAttribute("types",typeService.listTypeTop(5));
         model.addAttribute("tags",tagService.listTagTop(10));
         model.addAttribute("recommendBlogs",blogService.listBlogTop(5));
+        Double num = (double)page.getTotal() / page.getSize();
+        Double pageNum = Math.ceil(num);
+        model.addAttribute("lastPage",pageNum);
         return "index";
     }
+
+
 
 
     @GetMapping("/blog/{id}")
@@ -40,22 +47,24 @@ public class indexController {
         return "blog";
     }
 
-
+    //前端查询
     @PostMapping("/search")
-    public String search(
-            @PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC)
-                    Pageable pageable, @RequestParam String query,
-            Model model) {
-        model.addAttribute("page", blogService.listBlogByQuery("%" + query + "%", pageable));
+    public String search(Integer current, @RequestParam String query,
+            Model model){
+            Page<Blog> page = new Page<>(0,6);
+        if(current != null){
+            page.setCurrent(current);
+        }
+        model.addAttribute("page", blogService.listBlogByQuery( query , page));
         model.addAttribute("query",query);
         return "search";
     }
 
 
 
-    @GetMapping("/profile")
+    @GetMapping("/friendlyLink")
     public String profile() {
-        return "profile";
+        return "friendlyLink";
     }
 
 

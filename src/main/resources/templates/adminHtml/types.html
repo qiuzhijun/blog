@@ -30,7 +30,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="type,iterStat:${page.content}" align="center">
+            <tr th:each="type,iterStat:${page.getRecords()}" align="center">
                 <td th:text="${iterStat.count}">1</td>
                 <td th:id="${type.id}" th:utext="${type.name}">笔记</td>
                 <td>
@@ -43,11 +43,11 @@
             <tr>
                 <th colspan="3">
                     <form th:action="@{/admin/types}" method="post" class="ui form">
-                        <div class="required field">
-                            <div th:if="${page.totalPages>1}" class="ui  mini pagination menu">
-                                <a th:href="@{/admin/types(page=${page.number}-1)}" th:unless="${page.first}"
+                        <div th:if="${(page.getTotal)-(page.getSize())>=1}"  class="required field">
+                            <div class="ui  mini pagination menu">
+                                <a th:href="@{/admin/types(current=${page.getCurrent()}-1)}" th:unless="${page.getCurrent eq 1}"
                                    class=" item">上一页</a>
-                                <a th:href="@{/admin/types(page=${page.number}+1)}" th:unless="${page.last}"
+                                <a th:href="@{/admin/types(current=${page.getCurrent()}+1)}" th:unless="${page.getCurrent eq lastPage}"
                                    class=" item">下一页</a>
                             </div>
                             <input id="inp" type="text" style="width: 230px;float:right" name="name"
@@ -63,25 +63,46 @@
         </table>
     </div>
 </div>
-
+<div id="modal" class="ui modal">
+    <div class="header">您没有权限，请联系管理员升级</div>
+    <div class="image content">
+        <img class="image" width="300px" th:src="@{/images/wechat.png}">
+        <div class="description">
+            <p>此网站为个人网站</p>
+            <p>管理员有权限操作所有数据</p>
+            <p>如果有此需要，可加微信联系站主</p>
+            <p>期待大家的加入，让此网站变得越来越好！</p><br><br>
+            <p style="font-weight: 20">*作为一个真正的程序员,首先应该尊重编程,他是你的伙伴,而不是工具*</p>
+            <p style="font-weight: 20">*程序员之所以犯错误，不是因为他们不懂，而是因为他们自以为什么都懂*</p>
+        </div>
+    </div>
+</div>
 <!--底部-->
 <br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
 <!--/*/</th:block>/*/-->
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
     $(".teal.button").click(function () {
-        var id = parseInt(this.id);
-        var content = $("#" + id).text();
-        $("#" + id).html("<input type='text'  id='input' class='m_margin_type submit' name='newName'>");
-        $("#input").focus();
-        $('#input').bind('keypress', function (event) {
-            if (event.keyCode == "13") {
-                $("#input").blur();
-            }
-        });
+        var user =/*[[${session.user}]]*/;
+        if(user.type == 1){
+            var id = parseInt(this.id);
+            var content = $("#" + id).text();
+            $("#" + id).html("<div class='ui input focus'>" +
+                "<input type='text'  id='input' class='m_margin_type submit' name='newName'></div>");
+            $("#input").focus();
+            $('#input').bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    $("#input").blur();
+                }
+            });
+        }else{
+            upAccount();
+        }
+
         $("#input").blur(function () {
+
             $.ajax({
                 url: "update",
                 data: {
@@ -101,6 +122,9 @@
         })
     })
     $(".red.button").click(function () {
+        var user =/*[[${session.user}]]*/;
+
+        if(user.type == 1 ){
         var id = parseInt(this.id);
         $.ajax({
             url: "delete",
@@ -112,13 +136,14 @@
             success: function (resp) {
                 window.location.reload()
             }
-        })
-
+        })}
+        else{
+            upAccount();
+        }
     })
 
 
 </script>
-
 
 <script>
     $('.ui.form').form({
@@ -150,6 +175,11 @@
             on: 'hover'
         });
     })
+    function upAccount() {
+        $('#modal')
+            .modal('show')
+        ;
+    }
 </script>
 </body>
 </html>

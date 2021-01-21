@@ -1,15 +1,14 @@
 package cn.qzjblog.service.impl;
 
-import cn.qzjblog.dao.TypeRepository;
+import cn.qzjblog.entity.Tag;
+import cn.qzjblog.mapper.TypeMapper;
 import cn.qzjblog.myException.NotFoundException;
-import cn.qzjblog.po.Type;
+import cn.qzjblog.entity.Type;
 import cn.qzjblog.service.TypeService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,60 +21,69 @@ import java.util.List;
 @Service
 public class TypeServiceImpl implements TypeService {
     @Autowired
-    private TypeRepository repository;
-
-
+    private TypeMapper typeMapper;
+    @Autowired
+    QueryWrapper wrapper = new QueryWrapper();
     @Transactional
     @Override
     public Type saveType(Type type) {
-        return repository.save(type);
+        typeMapper.insert(type);
+        return  type;
     }
 
     @Transactional
     @Override
     public Type updateType(Long id, Type type) {
         //数据库里查出来的type
-        Type t = repository.findById(id).get();
+        Type t = typeMapper.selectById(id);
         if(t == null){
             throw new NotFoundException("不存在该类型");
         }
         BeanUtils.copyProperties(type,t);
         //返回新加的
-        return repository.save(type);
+        typeMapper.insert(type);
+        return type;
     }
 
     @Override
     public Type getTypeByName(String name) {
-        return repository.findByName(name);
+        wrapper.eq("name",name);
+        Type t= typeMapper.selectOne(wrapper);
+        wrapper.clear();
+        return t;
     }
 
     @Transactional
     @Override
     public Type getType(Long id) {
-        return repository.findById(id).get();
+        return typeMapper.selectById(id);
     }
 
+    //展示排名前几名的type，返回一个列表
     @Override
     public List<Type> listTypeTop(Integer size) {
-        Sort sort = Sort.by(Sort.Direction.DESC,"blog.size");
-        Pageable pageable = PageRequest.of(0,size,sort);
-        return repository.findTop(pageable);
+
+        return typeMapper.findTop(size);
     }
 
     @Transactional
     @Override
-    public Page<Type> listType(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Type> listType(Page<Type> page) {
+        QueryWrapper<Type> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("id");
+        Page<Type> page1 = typeMapper.selectPage(page, wrapper);
+        wrapper.clear();
+        return page1;
     }
 
     @Override
     public List<Type> listType() {
-        return repository.findAll();
+        return typeMapper.selectList(null);
     }
 
     @Transactional
     @Override
     public void deleteType(Long id) {
-        repository.deleteById(id);
+        typeMapper.deleteById(id);
     }
 }

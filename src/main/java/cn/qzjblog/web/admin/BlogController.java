@@ -1,15 +1,14 @@
 package cn.qzjblog.web.admin;
 
-import cn.qzjblog.po.Blog;
-import cn.qzjblog.po.User;
-import cn.qzjblog.service.BlogService;
-import cn.qzjblog.service.TagService;
-import cn.qzjblog.service.TypeService;
+import cn.qzjblog.entity.Blog;
+import cn.qzjblog.entity.Type;
+import cn.qzjblog.entity.User;
+import cn.qzjblog.service.impl.BlogServiceImpl;
+import cn.qzjblog.service.impl.TagServiceImpl;
+import cn.qzjblog.service.impl.TypeServiceImpl;
 import cn.qzjblog.vo.BlogQuery;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -32,23 +31,26 @@ public class BlogController {
     private static final String LIST = "adminHtml/backPage";
     private static final String REDIRECT_LIST = "redirect:/admin/blogs";
     @Autowired
-    private TagService tagService;
+    private TagServiceImpl tagService;
     @Autowired
-    private BlogService blogService;
+    private BlogServiceImpl blogService;
     @Autowired
-    private TypeService typeService;
+    private TypeServiceImpl typeService;
 
 
     //博客列表
     @GetMapping("/blogs")
-    public String manage(
-            @PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-            BlogQuery blog, Model model) {
-        model.addAttribute("page", blogService.listBlog(pageable, blog));
+    public String manage(Integer current, BlogQuery blog, Model model,HttpSession httpSession) {
+        Page<Blog> page = new Page<>(1, 5);
+        if (current != null) {
+            page.setCurrent(current);
+        }
+        User user = (User) httpSession.getAttribute("user");
+        model.addAttribute("page", blogService.listBlog(page, blog,user));
         model.addAttribute("types", typeService.listType());
+        addPageNum(page,model);
         return LIST;
     }
-
 
     //修改博客，添加事务
     @Transactional
@@ -56,21 +58,36 @@ public class BlogController {
     public String update(@PathVariable Long id, Model model) {
         addTypesAndTags(model);
         Blog blog = blogService.getBlogById(id);
+
         blog.init();
         model.addAttribute("blog", blog);
 
         return ADD;
     }
-
-    //查询博客
-    @PostMapping("/search")
-    public String search(
-            @PageableDefault(size = 8, sort = {"updateTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-            BlogQuery blog, Model model) {
-        model.addAttribute("page", blogService.listBlog(pageable, blog));
-        return "adminHtml/backPage :: blogList";
+    private void addTypesAndTags(Model model) {
+        model.addAttribute("tags", tagService.listTag());
+        model.addAttribute("types", typeService.listType());
     }
 
+    //后台查询博客
+    @PostMapping("/search")
+    public String search(Integer current, BlogQuery blog, Model model,HttpSession session) {
+        Page<Blog> page = new Page<>(1, 5);
+        if (current != null) {
+            page.setCurrent(current);
+        }
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("page", blogService.listBlog(page, blog,user));
+        addPageNum(page,model);
+
+        return "adminHtml/backPage :: blogList";
+    }
+    //将页码数加入
+    void addPageNum(Page page,Model model){
+        Double num = (double) page.getTotal() / page.getSize();
+        Double pageNum = Math.ceil(num);
+        model.addAttribute("lastPage", pageNum);
+    }
     //写博客，初始化blog对象，添加事务
     @Transactional
     @GetMapping("/add")
@@ -80,26 +97,20 @@ public class BlogController {
         return ADD;
     }
 
-    private void addTypesAndTags(Model model) {
-        model.addAttribute("tags", tagService.listTag());
-        model.addAttribute("types", typeService.listType());
-    }
+
 
 
     //添加博客
     @Transactional
     @PostMapping(value = "/blogs")
     public String post(Blog blog, HttpSession session, RedirectAttributes attributes) {
-        System.out.println(blog);
-        blog.setUser((User) session.getAttribute("user"));
-        blog.setType(typeService.getType(blog.getType().getId()));
-        blog.setTags(tagService.listTag(blog.getTagIds()));
-
+        blog = initBlog(session, blog);
         Blog b;
-        if(blog.getId()==null){
-         b = blogService.saveBlog(blog);
-        }else {
-            b = blogService.updateBlog(blog.getId(),blog);
+        if (blog.getId() == null) {
+            blog.setView(0);
+            b = blogService.saveBlog(blog);
+        } else {
+            b = blogService.updateBlog(blog.getId(), blog);
         }
 
         if (b != null) {
@@ -122,4 +133,15 @@ public class BlogController {
     }
 
 
+    //初始化博客
+    public Blog initBlog(HttpSession session, Blog blog) {
+        User user = (User) session.getAttribute("user");
+        Type type = typeService.getType(blog.getType().getId());
+        blog.setUser(user);
+        blog.setUserId(user.getId());
+        blog.setType(type);
+        blog.setTypeId(type.getId());
+        blog.setTags(tagService.listTag(blog.getTagIds()));
+        return blog;
+    }
 }

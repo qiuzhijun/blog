@@ -15,10 +15,11 @@
         body {
             background: #0C1021;
         }
-        .right-last{
+
+        .right-last {
             position: absolute;
-            right:-100px;
-            top:2%;
+            right: -100px;
+            top: 2%;
         }
 
     </style>
@@ -33,7 +34,7 @@
             <!--创建蓝绿色的头项-->
             <h2 class="ui header item m_t_color_name">Caelum_Blog</h2>
             <!--创建普通项-->
-            <a class="m_item m_mobile_hide item" th:classappend="${n==1} ? 'active'" th:href="@{/index}"><i
+            <a class="m_item m_mobile_hide item" th:classappend="${n==1} ? 'active'" th:href="@{/}"><i
                     class="small home icon"></i>首页</a>
             <a class="m_item m_mobile_hide item" th:classappend="${n==2} ? 'active'" th:href="@{/types/-1}"><i
                     class="small idea icon"></i>分类</a>
@@ -41,8 +42,8 @@
                     class="small tags icon"></i>标签</a>
             <a class="m_item m_mobile_hide item" th:classappend="${n==4} ? 'active'" th:href="@{/archives}"><i
                     class="small clone icon"></i>归档</a>
-            <a class="m_item m_mobile_hide item" th:classappend="${n==5} ? 'active'" th:href="@{/profile}"><i
-                    class="small music  icon"></i>网抑云</a>
+            <a class="m_item m_mobile_hide item" th:classappend="${n==5} ? 'active'" th:href="@{/friendlyLink}"><i
+                    class="small music  icon"></i>友情链接</a>
             <a class="m_item m_mobile_hide item" th:classappend="${n==6} ? 'active'" th:href="@{/message}"> <i
                     class="small archive icon"></i>留言板</a>
             <a class="m_item m_mobile_hide item close-light"><i class="small lightbulb outline icon"></i>关灯</a>
@@ -50,32 +51,33 @@
             <!--创建右边项-->
             <div class="item">
                 <form th:action="@{/search}" method="post" name="search" target="_blank">
-                <!--创建搜索，透明显示-->
-                <div  class="m_mobile_hide ui icon transparent inverted input">
-                    <input name="query"  type="text" th:value="${query}" placeholder="搜索……">
-                    <!--在内加入搜索图标-->
-                    <i onclick="document.forms['search'].submit()" class="search link icon"></i>
-                </div>
+                    <!--创建搜索，透明显示-->
+                    <div class="m_mobile_hide ui icon transparent inverted input">
+                        <input name="query" type="text" th:value="${query}" placeholder="搜索……">
+                        <!--在内加入搜索图标-->
+                        <i onclick="document.forms['search'].submit()" class="search link icon"></i>
+                    </div>
                 </form>
-<form id="success" th:action="@{/admin/blogs}"></form>
+                <form id="success" th:action="@{/admin/blogs}"></form>
 
-            <div class="right-last m-item m-mobile-hide menu">
-                <div th:if="${session.user} != null" class="ui right-last  dropdown  item">
-                    <div  class="text">
-                        <img class="ui avatar image"  th:src='@{${session.user.avatar}}' >
-                        <span th:text="${session.user.nickname}"></span>
+                <div class="right-last m-item m-mobile-hide menu">
+                    <div th:if="${session.user} != null" class="ui right-last  dropdown  item">
+                        <div class="text">
+                            <img class="ui avatar image" th:src='@{${session.user.avatar}}'>
+                            <span th:text="${session.user.nickname}"></span>
+                        </div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a th:href="@{/admin/blogs}" class="item">管理博客</a>
+                            <a th:href="@{/admin/profile}" class="item">个人中心</a>
+                            <a th:href="@{/admin/logout}" class="item">注销</a>
+                        </div>
                     </div>
-                    <i class="dropdown icon"></i>
-                    <div class="menu">
-                        <a th:href="@{/admin/blogs}" class="item">管理博客</a>
-                        <a th:href="@{/admin/logout}" class="item">注销</a>
+                    <div class="ui right-last stackable menu inverted secondary" th:if="${session.user} == null">
+                        <a onclick="loginShow()" class="m_mobile_hide item">登陆</a>
+                        <a onclick="registerShow()" class="m_mobile_hide item">注册</a>
                     </div>
                 </div>
-                <div  class="ui right-last stackable menu inverted secondary" th:if="${session.user} == null">
-                    <a onclick="loginShow()" class="m_mobile_hide item">登陆</a>
-                    <a onclick="registerShow()" class="m_mobile_hide item">注册</a>
-                </div>
-            </div>
             </div>
 
         </div>
@@ -86,18 +88,15 @@
 </nav>
 
 
-
-
 <div th:fragment="tools">
-    <div class="ui tiny modal">
+    <div id="loginModal" class="ui tiny modal">
         <i class="close icon"></i>
-
         <div class="ui container">
             <br>
             <div class="header ui grid">
                 <br>
                 <div class="seven wide column"></div>
-                <a id="login" onclick="login()"  href="javascript:void(0)"
+                <a id="login" onclick="login()" href="javascript:void(0)"
                    class="two wide column m_font_big bottom_color">登陆</a>
                 <a id="reg" onclick="regis()" href="javascript:void(0)" class="two wide column m_font_big">注册</a>
                 <div class="five wide column"></div>
@@ -114,7 +113,7 @@
                 <div class="ui one wide column"></div>
                 <div class="ui eight wide column form">
                     <br>
-                    <div id="nick"  style='width: 100%' class="ui field icon"></div>
+                    <div id="nick" style='width: 100%' class="ui field icon"></div>
                     <div style="width: 100%" class="field ui icon input">
                         <input type="text" name="email" placeholder="邮箱">
                         <i id="checkEmail" class=""></i>
@@ -132,19 +131,20 @@
     </div>
 
 
-
     <div class="m_padded m_fixed m_bottom_right">
         <div id="tools" class="ui  vertical  icon buttons" style="display:none;">
             <button class="ui icon button wx"><i class="weixin icon"></i></button>
             <a id="toTop" class="ui icon button"><i class="chevron up icon"></i></a>
         </div>
     </div>
+
     <div class="ui toc_container toc-con flowing popup  transition hidden" style="width: 250px">
         <ol class="js-toc">
 
         </ol>
 
     </div>
+
     <div id="qrcode" class="ui wx-con flowing popup m_padded_small transition hidden" style="width:100px">
         <!--<musicImg src="static/images/zfb.jpg"  class="ui  rounded bordered image"
              style="width: 90px;"
@@ -153,14 +153,14 @@
 </div>
 
 
-<footer th:fragment="footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
+<footer th:fragment="footer"  class="ui  inverted segment m_opacity_mini m_padded_small">
     <!--创建容器 所有元素居中-->
     <div class="ui center aligned container">
-        <!--将容器布局，分为16份，在每个div间加入竖线-->
+    <!--    &lt;!&ndash;将容器布局，分为16份，在每个div间加入竖线&ndash;&gt;
         <div class="ui inverted divided stackable grid">
-            <!--三份的列宽-->
+            &lt;!&ndash;三份的列宽&ndash;&gt;
             <div class="three wide column">
-                <!--插入  圆角  图片-->
+                &lt;!&ndash;插入  圆角  图片&ndash;&gt;
                 <div class="ui inverted link list">
                     <div class="item">
                         <img class="ui rounded image" style="width: 110px" alt="图片走丢了QWQ。"
@@ -195,35 +195,38 @@
                 </div>
             </div>
         </div>
-        <!--在页面底部增加一条横线-->
-        <div class="ui inverted section divider"></div>
+        &lt;!&ndash;在页面底部增加一条横线&ndash;&gt;
+        <div class="ui inverted section divider"></div>-->
         <!--加入底部版权说明-->
-        <p class="m_opacity_very_mini m_text_spaced">Copyright © 2020 Qiuzhijun All rights reserved</p>
+        <hr style="background-color:black; height:1px; border:none;">
+
+        <p class=" m_black ">公安备案号：鲁ICP备2021002005号&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="wechat icon"></i>q17664198871&nbsp;&nbsp;&nbsp;&nbsp; <i class="mail icon "></i>1185538241@qq.com</p>
+        <hr style="background-color:black; height:1px; border:none;">
     </div>
 
 </footer>
 <th:block th:fragment="script">
-    <script th:src="@{/Semantic-UI-2.4.1/examples/assets/library/jquery.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
     <script th:src="@{/Semantic-UI-2.4.1/dist/semantic.min.js}"></script>
     <script th:src="@{/lib/prism/prism.js}"></script>
     <script th:src="@{/lib/tocbot/tocbot.min.js}"></script>
     <script th:src="@{/lib/qrcodejs/qrcode.min.js}"></script>
     <script th:src="@{/lib/waypoints/jquery.waypoints.min.js}"></script>
-    <script th:src="@{/lib/line.js}"
+<!--    <script th:src="@{/lib/line.js}"
             type="text/javascript"
             color="0,255,210" opacity="0.8"
-            count="300"></script>
+            count="300"></script>-->
     <!--登陆、注册方法-->
     <script>
 
-    window.onload
+        window.onload
         //密码校验
         //密码(6-16的英文数字混合）
         var psdReg = /^(?![^a-zA-Z]+$)(?!\D+$)[0-9a-zA-Z]{6,16}$/;
 
         //email校验
-        var emailReg =/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        var emailReg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 
         //注册时输入昵称
         var regDiv = "<input type='text' name='nickname' placeholder='昵称'>" +
@@ -233,7 +236,7 @@
 
         function loginShow() {
             console.log("登陆")
-            $('.ui.modal')
+            $('#loginModal')
                 .modal('show');
             login();
 
@@ -266,35 +269,34 @@
 
         $("#loginBtn").click(function () {
 
-            if($("#loginBtn").html() === "注册"){
+            if ($("#loginBtn").html() === "注册") {
                 alert("敬请期待");
-            }else{
-                if(psdReg.test($("[name='password']").val()) && emailReg.test($("[name='email']").val())){
+            } else {
+                if (psdReg.test($("[name='password']").val()) && emailReg.test($("[name='email']").val())) {
                     $.ajax({
                         url: "/blog/admin/login",
                         data: {
-                            email : $("[name='email']").val(),
-                            password :$("[name='password']").val()
+                            email: $("[name='email']").val(),
+                            password: $("[name='password']").val()
                         },
                         dateType: "json",
-                        type : "post",
+                        type: "post",
                         success: function (resp) {
-                            if(resp.username === undefined){
+                            if (resp.nickname === undefined) {
                                 console.log("失败");
-                            }
-                            else{
+                            } else {
                                 $("#success").submit();
                             }
                         }
                     })
-                }else{
+                } else {
                     console.log("校验失败");
                 }
             }
         })
-    $('.ui.dropdown').dropdown({
-        on: 'hover'
-    });
+        $('.ui.dropdown').dropdown({
+            on: 'hover'
+        });
 
     </script>
 </th:block>

@@ -8,6 +8,7 @@
 
 <nav th:replace="adminHtml/_fragments :: menu(3)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
 </nav>
+<br>
 
 
 <!--中间内容-->
@@ -30,7 +31,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="tag,iterStat:${page.content}" align="center">
+            <tr th:each="tag,iterStat:${page.getRecords()}" align="center">
                 <td th:text="${iterStat.count}">1</td>
                 <td th:id="${tag.id}" th:utext="${tag.name}">笔记</td>
                 <td>
@@ -43,12 +44,16 @@
             <tr>
                 <th colspan="3">
                     <form th:action="@{/admin/tags}" method="post" class="ui form">
-                        <div class="required field">
-                            <div th:if="${page.totalPages>1}" class="ui  mini pagination menu">
-                                <a th:href="@{/admin/tags(page=${page.number}-1)}" th:unless="${page.first}"
+                        <div th:if="${(page.getTotal)-(page.getSize())>=1}" class="required field">
+                            <div class="ui  mini pagination menu"><!--th:if="${page.getCurrent()>1}"-->
+                                <a th:href="@{/admin/tags(current=${page.getCurrent()}-1)}"
+                                   th:unless="${page.getCurrent eq 1}"
                                    class=" item">上一页</a>
-                                <a th:href="@{/admin/tags(page=${page.number}+1)}" th:unless="${page.last}"
+
+                                <a th:href="@{/admin/tags(current=${page.getCurrent()}+1)}"
+                                   th:unless="${page.getCurrent() eq lastPage}"
                                    class=" item">下一页</a>
+
                             </div>
                             <input type="text" style="width: 230px;float:right" name="name"
                                    placeholder="标签名称">
@@ -74,59 +79,85 @@
         </div>
     </div>
 </div>
-
+<div id="modal" class="ui modal">
+    <div class="header">您没有权限，请联系管理员升级</div>
+    <div class="image content">
+        <img class="image" width="300px" th:src="@{/images/wechat.png}">
+        <div class="description">
+            <p>此网站为个人网站</p>
+            <p>管理员有权限操作所有数据</p>
+            <p>如果有此需要，可加微信联系站主</p>
+            <p>期待大家的加入，让此网站变得越来越好！</p><br><br>
+            <p style="font-weight: 20">*作为一个真正的程序员,首先应该尊重编程,他是你的伙伴,而不是工具*</p>
+            <p style="font-weight: 20">*程序员之所以犯错误，不是因为他们不懂，而是因为他们自以为什么都懂*</p>
+        </div>
+    </div>
+</div>
 <!--底部-->
 <br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
 <!--/*/</th:block>/*/-->
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
+    var user =/*[[${session.user}]]*/;
     $(".teal.button").click(function () {
-        var id = parseInt(this.id);
-        var content = $("#" + id).text();
-        $("#" + id).html("<input type='text'  id='input' class='m_margin_type submit' name='newName'>");
-        $("#input").focus();
-        $('#input').bind('keypress', function (event) {
-            if (event.keyCode == "13") {
-                $("#input").blur();
-            }
-        });
-        $("#input").blur(function () {
+        if (user.type == 1) {
+            var id = parseInt(this.id);
+            var content = $("#" + id).text();
+            $("#" + id).html("<div class='ui input focus'>" +
+                "<input type='text'  id='input' class='m_margin_type submit' name='newName'></div>");
+            $("#input").focus();
+            $('#input').bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    $("#input").blur();
+                }
+            });
+            $("#input").blur(function () {
+                $.ajax({
+                    url: "updateTag",
+                    data: {
+                        id: id,
+                        name: $("#input").val()
+                    },
+                    type: "post",
+                    dateType: "json",
+                    success: function (resp) {
+                        $("#" + id).text(resp.name);
+                        if (resp.name === null) {
+                            alert("分类重复或未填写")
+                            $("#" + id).text(content);
+                        }
+                    }
+                })
+            })
+        } else {
+            upAccount();
+        }
+    })
+    $(".red.button").click(function () {
+        if (user.type == 1) {
+            var id = parseInt(this.id);
             $.ajax({
-                url: "updateTag",
+                url: "deleteTag",
                 data: {
-                    id: id,
-                    name: $("#input").val()
+                    id: id
                 },
                 type: "post",
                 dateType: "json",
                 success: function (resp) {
-                    $("#"+id).text(resp.name);
-                    if (resp.name === null) {
-                        alert("分类重复或未填写")
-                        $("#" + id).text(content);
-                    }
+                    window.location.reload()
                 }
             })
-        })
+        } else {
+            upAccount();
+        }
     })
-    $(".red.button").click(function () {
-        var id = parseInt(this.id);
-        $.ajax({
-            url: "deleteTag",
-            data: {
-                id: id
-            },
-            type: "post",
-            dateType: "json",
-            success: function (resp) {
-                window.location.reload()
-            }
-        })
-
-    })
-
+    function upAccount() {
+        $('#modal')
+            .modal('show')
+        ;
+    }
 
 </script>
 <script>

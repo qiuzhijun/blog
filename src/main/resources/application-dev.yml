@@ -13,7 +13,7 @@ spring:
 
 logging:
   level:
-    root: warn
+    root: info
     com.qzjblog.blog: info
   file:
     name: log/blog-dev.log

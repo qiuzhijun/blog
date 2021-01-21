@@ -20,12 +20,12 @@
                 </div>
                 <!--篇数字样-->
                 <div class="right aligned column">
-                    共 <h3 th:text="${page.totalElements}" class="ui orange header m_inline_block">10</h3> 个
+                    共 <h3 th:text="${page.getTotal()}" class="ui orange header m_inline_block">10</h3> 个
                 </div>
             </div>
         </div>
 
-        <div th:each="blog : ${page.content}" class="ui attached  ct  segment">
+        <div th:each="blog : ${page.getRecords()}" class="ui attached  ct  segment">
             <!--文章部分-->
             <div class="ui middle aligned mobile reversed stackable grid">
                 <!--左边文章部分-->
@@ -77,16 +77,16 @@
             </div>
         </div>
 
-        <div class="ui ct attached bottom segment">
-            <div th:if="${page.totalPages>1}" class="ui middle aligned two column grid">
+        <div th:if="${(page.getTotal)-(page.getSize())>=1}" class="ui ct attached bottom segment">
+            <div  class="ui middle aligned two column grid">
                 <!--上一页-->
                 <div class="column">
-                    <a th:href="@{/(page=${page.number}-1)}" th:unless="${page.first}"
-                       class="ui basic blue mini button">上一页</a>
+                    <a th:href="@{/(page=${page.getCurrent()}-1)}" th:unless="${page.getCurrent eq 1}"
+                       class="ui basic violet mini button">上一页</a>
                 </div>
-                <!--下一页-->
                 <div class="right aligned column">
-                    <a th:href="@{/(page=${page.number}+1)}" th:unless="${page.last}" class="ui basic blue mini button">下一页</a>
+                    <a th:href="@{/(page=${page.getCurrent()}+1)}" th:unless="${page.getCurrent() eq lastPage}"
+                       class="ui basic blue mini button">下一页</a>
                 </div>
             </div>
         </div>
@@ -117,12 +117,6 @@
     /*移动端显示菜单*/
     $('.menu.toggle').click(function () {
         $('.m_item').toggleClass('m_mobile_hide');
-    });
-    /*弹出答案*/
-    $("#answer").popup({
-        popup: $(".checkAnswer.popup"),
-        on: "click",
-        position: "top center"
     });
     /*关灯 、开灯功能*/
     /*关灯按钮*/
