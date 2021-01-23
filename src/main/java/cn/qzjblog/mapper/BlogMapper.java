@@ -32,4 +32,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
     List<Blog> selectBlogByTagId(Long tagId,@Param("start")Long start,Long size);
     @Select("select * from t_blog b,t_user u where b.user_id = u.id limit #{page.current},#{page.size}")
     Page<Blog> selectAllBlog(@Param("page") Page<Blog> page);
+
+    @Select("select count(1) from t_user_blog where user_id=#{userId} and blog_id = #{blogId}")
+    Integer selectIsStar(Long userId, Long blogId);
 }

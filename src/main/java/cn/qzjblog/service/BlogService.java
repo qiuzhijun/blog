@@ -14,7 +14,7 @@ import java.util.Map;
 public interface BlogService {
     Page<Blog> listBlog(Page<Blog> page);
 
-    Blog getAndConvert(Long id);
+    Blog getAndConvert(Long id,User user);
 
     List<Blog> listBlogTop(Integer size);
 

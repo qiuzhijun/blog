@@ -4,6 +4,7 @@
     <title>Cealum博客-个人中心</title>
 </head>
 <style type="text/css">
+
     td {
         width: 180px;
     }
@@ -90,7 +91,7 @@
                                              onmouseout="dis()">
                                         <a href="javascript:void(0)" onmouseover="show()" onmouseout="dis()" class="s1"><i
                                                 class="m_t_color_theme big camera icon"></i></a>
-                                        <div th:text="${msg}"></div>
+
                                     </div>
                                 </div>
 
@@ -100,7 +101,8 @@
                                     vertical-align:middle" th:text="${user.nickname}">用户姓名
                                     </div>
                                 </div>
-                                <div class="eleven wide column"></div>
+                                <div class="eleven wide column">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -169,11 +171,11 @@
                 <div class="ui header m_font_big">我的评论</div>
                 <table th:each="table : ${tables}" class="ui table">
                     <tr>
-                        <td class="artical"><a th:href="@{/blog/{id}(id=${table.id})}">《<span th:text="${table.title}">文章名</span>》</a>
+                        <td class="artical"><a th:href="@{/blog/{id}(id=${table.title.id})}">《<span th:text="${table.title.title}">文章名</span>》</a>
                         </td>
                     </tr>
-                    <tr>
-                        <td th:text="${table.content}" class="comment">真好</td>
+                    <tr th:each="comment : ${table.comments}">
+                        <td class="comment"><font th:text="${comment.nickname}"></font> : <font th:text="${comment.content}"></font></td>
                     </tr>
                 </table>
             </div>
@@ -189,16 +191,16 @@
     </div>
     <div class="image content">
         <form th:action="@{/admin/updateAvatar}" method="post" enctype="multipart/form-data">
-            <div class="ui small image">
-                <img th:src="@{${user.avatar}}">
-                <div class="ui input focus">
-                    <input type="file" class="ui input" name="file"/>
-                </div>
-            </div>
-            <button type="submit" class="ui  icon button">
-                上传
-                <i class="checkmark icon"></i>
-            </button>
+                    <input type="file" class="ui input" name="file"/><br><br>
+                    <div class="ui input focus">
+                    <input type="text"  placeholder="图片链接" name="url"></div><br><br>
+                    请上传方形图片或输入图片链接
+                    <div style="width:320px;height:50px;text-align:right;">
+                        <button type="submit" class="ui icon button">
+                            上传
+                            <i class="checkmark icon"></i>
+                        </button>
+                    </div>
         </form>
     </div>
 

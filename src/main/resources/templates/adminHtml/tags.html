@@ -35,7 +35,7 @@
                 <td th:text="${iterStat.count}">1</td>
                 <td th:id="${tag.id}" th:utext="${tag.name}">笔记</td>
                 <td>
-                    <a class="ui mini teal basic button" th:id="${tag.id}+'update'">编辑</a>
+                    <a class="ui mini blue basic button" th:id="${tag.id}+'update'">编辑</a>
                     <a class=" ui mini red basic button" th:id="${tag.id} +'delete'">删除</a>
                 </td>
             </tr>
@@ -57,7 +57,7 @@
                             </div>
                             <input type="text" style="width: 230px;float:right" name="name"
                                    placeholder="标签名称">
-                            <button class="ui submit  violet basic button m_margin_right_min right floated">新增</button>
+                            <button class="ui submit  blue basic button m_margin_right_min right floated">新增</button>
                             <br><br>
                             <div class="ui error message"></div>
                         </div>
@@ -101,8 +101,8 @@
 <!--/*/</th:block>/*/-->
 <script th:inline="javascript" type="text/javascript">
     var user =/*[[${session.user}]]*/;
-    $(".teal.button").click(function () {
-        if (user.type == 1) {
+    $(".blue.button").click(function () {
+        if (user.type == "会员") {
             var id = parseInt(this.id);
             var content = $("#" + id).text();
             $("#" + id).html("<div class='ui input focus'>" +
@@ -135,8 +135,9 @@
             upAccount();
         }
     })
+
     $(".red.button").click(function () {
-        if (user.type == 1) {
+        if (user.type == "会员") {
             var id = parseInt(this.id);
             $.ajax({
                 url: "deleteTag",
@@ -145,7 +146,7 @@
                 },
                 type: "post",
                 dateType: "json",
-                success: function (resp) {
+                success: function () {
                     window.location.reload()
                 }
             })

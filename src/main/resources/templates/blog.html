@@ -19,7 +19,9 @@
                     <img src="https://picsum.photos/id/200/100/100" th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                          class="ui avatar image">
                     <!--作者名-->
-                    <div class="content"><a href="#" th:text="${blog.user.nickname}" class=" header">一叶知秋</a></div>
+                    <div class="content">
+                        <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
+                        <span th:text="${blog.user.nickname}" >一叶知秋</span></div>
                 </div>
                 <div class="item c ">
                     <i class="calendar alternate outline icon"></i><span
@@ -28,9 +30,9 @@
                 <div class="item c ">
                     <i class="eye icon"></i> <span th:text="${blog.view}">10w+</span>
                 </div>
-                <div id="star" onclick="starBlog()" style="cursor:pointer" class="item c ">
-                    <i class="star icon"></i> 收藏
-                </div>
+                    <div th:if="${session.user != null}" id="star" onclick="starBlog()" style="cursor:pointer" class="item c ">
+                        <i class="star icon"></i> <font id="status" th:text="${blog.isStar}">收藏</font>
+                    </div>
             </div>
         </div>
 
@@ -38,7 +40,7 @@
         <div class="ui ct  attached padded segment ">
             <!--flag-->
             <div class="ui segment basic right aligned">
-                <div class="ui orange label" th:text="${blog.flag}">转载</div>
+                <div class="ui m_t_bc_color_theme label" th:text="${blog.flag}">转载</div>
             </div>
             <!--标题-->
             <h2 class="ui center aligned header" th:text="${blog.title}">活着不是为了活着</h2>
@@ -52,12 +54,12 @@
             <div class="m_padded_left_right_responsive">
 
                 <div th:each="tag : ${blog.tags}" th:text="${tag.name}"
-                     class="ui basic violet left label m_text_thin m_padded_mini">励志
+                     class="ui basic m_t_color_name left label m_text_thin m_padded_mini">励志
                 </div>
             </div>
             <!--赞赏-->
             <div th:if="${blog.appreciation}" class="ui center aligned segment basic">
-                <button id="payBtn" class="ui orange basic circular button">赞赏</button>
+                <button id="payBtn" class="ui m_t_bc_color_theme   circular button">赞赏</button>
             </div>
             <div class="ui payMoney flowing popup  transition hidden">
                 <div class="ui basic label">
@@ -80,7 +82,7 @@
             </div>
         </div>
         <!--首图-->
-        <div  class="ui ct attached segment">
+        <div class="ui ct attached segment">
             <img style="margin: 0 auto;" th:src="@{${blog.firstPicture}}" alt="图片走丢了QWQ。"
                  class="ui rounded image">
         </div>
@@ -107,50 +109,62 @@
             </div>
         </div>
 
-        <div th:if="${blog.commentabled}" class="ui bottom attached segment">
+        <div th:if="${blog.commentabled}" class="ui ct bottom attached segment">
             <!--留言区域列表-->
-            <div id="comment-container"  class="ui teal segment">
+            <div id="comment-container" class="ui ct black segment">
                 <div th:fragment="commentList">
                     <div class="ui threaded comments" style="max-width: 100%;">
                         <h3 class="ui dividing header">评论</h3>
                         <div class="comment" th:each="comment : ${comments}">
                             <a class="avatar">
-                                <img  class="ui avatar image" th:src="@{${comment.avatar}}">
+                                <img class="ui avatar image" th:src="@{${comment.avatar}}">
                             </a>
                             <div class="content">
-                                <a class="author" >
-                                    <div class="ui mini basic violet  label m_padded_mini" th:if="${comment.adminComment}">博主</div>
+                                <a class="author">
+                                    <div class="ui mini basic m_t_color_name  label m_padded_mini"
+                                         th:if="${comment.adminComment}">博主
+                                    </div>
                                     <span th:text="${comment.nickname}">Matt</span>
                                 </a>
                                 <div class="metadata">
-                                    <span class="date" th:text="${#dates.format(comment.createTime,'yyyy-MM-dd HH:mm')}">Today at 5:42PM</span>
+                                    <span class="date"
+                                          th:text="${#dates.format(comment.createTime,'yyyy-MM-dd HH:mm')}">Today at 5:42PM</span>
                                 </div>
                                 <div class="text" th:text="${comment.content}">
                                     How artistic!
                                 </div>
                                 <div class="actions">
-                                    <a class="reply" data-commentid="1" data-commentnickname="Matt" th:attr="data-commentid=${comment.id},data-commentnickname=${comment.nickname}" onclick="reply(this)">回复</a>
+                                    <a class="reply" data-commentid="1" data-commentnickname="Matt"
+                                       th:attr="data-commentid=${comment.id},data-commentnickname=${comment.nickname}"
+                                       onclick="reply(this)">回复</a>
                                 </div>
                             </div>
                             <div class="comments" th:if="${#arrays.length(comment.replyComments)}>0">
                                 <div class="comment" th:each="reply : ${comment.replyComments}">
                                     <a class="avatar">
-                                        <img src="https://unsplash.it/100/100?image=1005" class="ui avatar image" th:src="@{${reply.avatar}}">
+                                        <img src="https://unsplash.it/100/100?image=1005" class="ui avatar image"
+                                             th:src="@{${reply.avatar}}">
                                     </a>
                                     <div class="content">
-                                        <a class="author" >
-                                            <div class="ui mini basic violet  label m_padded_mini" th:if="${reply.adminComment}">博主</div>
+                                        <a class="author">
+                                            <div class="ui mini basic m_t_color_name  label m_padded_mini"
+                                                 th:if="${reply.adminComment}">博主
+                                            </div>
                                             <span th:text="${reply.nickname}">小红</span>
-                                            &nbsp;回复<span th:text="|@ ${reply.parentComment.nickname}|" class="m_t_color_name">@ 小白</span>
+                                            &nbsp;回复<span th:text="|@ ${reply.parentComment.nickname}|"
+                                                          class="m_t_color_name">@ 小白</span>
                                         </a>
                                         <div class="metadata">
-                                            <span class="date" th:text="${#dates.format(reply.createTime,'yyyy-MM-dd HH:mm')}">Today at 5:42PM</span>
+                                            <span class="date"
+                                                  th:text="${#dates.format(reply.createTime,'yyyy-MM-dd HH:mm')}">Today at 5:42PM</span>
                                         </div>
                                         <div class="text" th:text="${reply.content}">
                                             How artistic!
                                         </div>
                                         <div class="actions">
-                                            <a class="reply" data-commentid="1" data-commentnickname="Matt" th:attr="data-commentid=${reply.id},data-commentnickname=${reply.nickname}" onclick="reply(this)">回复</a>
+                                            <a class="reply" data-commentid="1" data-commentnickname="Matt"
+                                               th:attr="data-commentid=${reply.id},data-commentnickname=${reply.nickname}"
+                                               onclick="reply(this)">回复</a>
                                         </div>
                                     </div>
                                 </div>
@@ -169,17 +183,21 @@
                     <div class="field m-mobile-wide m-margin-bottom-small">
                         <div class="ui left icon input">
                             <i class="user icon"></i>
-                            <input type="text" name="nickname" placeholder="姓名" th:value="${session.user}!=null ? ${session.user.nickname}">
+                            <input type="text" name="nickname" placeholder="姓名"
+                                   th:value="${session.user}!=null ? ${session.user.nickname}">
                         </div>
                     </div>
                     <div class="field m-mobile-wide m-margin-bottom-small">
                         <div class="ui left icon input">
                             <i class="mail icon"></i>
-                            <input type="text" name="email" placeholder="邮箱" th:value="${session.user}!=null ? ${session.user.email}">
+                            <input type="text" name="email" placeholder="邮箱"
+                                   th:value="${session.user}!=null ? ${session.user.email}">
                         </div>
                     </div>
                     <div class="field  m-margin-bottom-small m-mobile-wide">
-                        <button id="commentpost-btn" type="button" class="ui m_t_bc_color_theme button m-mobile-wide"><i class="edit icon"></i>发布</button>
+                        <button id="commentpost-btn" type="button" class="ui m_t_bc_color_theme button m-mobile-wide"><i
+                                class="edit icon"></i>发布
+                        </button>
                     </div>
                 </div>
 
@@ -206,6 +224,64 @@
 </div>
 
 
+<div id="prompt" class="ui mini modal">
+    <i class="close icon"></i>
+    <div class="header">注册链接已发送至您的邮箱，请前往并完成注册</div>
+</div>
+<div id="prompt2" class="ui mini modal">
+    <i class="close icon"></i>
+    <div class="header">邮箱已被注册！</div>
+</div>
+<div id="loginModal" class="ui tiny modal">
+    <i id="logClose" class="close icon"></i>
+    <div class="ui container">
+        <br>
+        <div class="header ui grid">
+            <br>
+            <div class="seven wide column"></div>
+            <a id="login" onclick="login()" href="javascript:void(0)"
+               class="two wide column m_font_big bottom_color">登陆</a>
+            <a id="reg" onclick="regis()" href="javascript:void(0)" class="two wide column m_font_big">注册</a>
+            <div class="five wide column"></div>
+
+        </div>
+    </div>
+    <div class="ui inverted section m_margin_tb divider"></div>
+
+    <div class="image  content">
+        <div class="ui grid">
+
+            <div class="ui seven wide column medium image">
+                <img th:src="@{/images/cat.gif}" width="250px">
+                <span id="error" style="text-align: center;color: red"></span>
+            </div>
+
+            <div class="ui one wide column"></div>
+            <div class="ui eight wide column form">
+                <br>
+                <div id="nick" style='width: 100%' class="ui field icon"></div>
+                <div style="width: 100%" class="field ui icon input">
+                    <input type="text" name="email" placeholder="邮箱">
+                    <i id="checkEmail" class=""></i>
+                </div>
+                <div style="width: 100%" class="field  ui icon input">
+                    <input type="password" name="password" placeholder="密码(6-16位英文数字混合）">
+                    <i id="checkPassword" class=""></i>
+                </div>
+                <div class="field">
+                    <button class="ui button m_padded_small m_t_color_name basic" id="loginBtn">登陆</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
 <!--底部-->
 <!--创建 无留空 片段 -->
 <br/><br/><br/>
@@ -215,7 +291,11 @@
 <!--/*/</th:block>/*/-->
 <!--赞赏功能，点击弹出二维码 -->
 <script>
-
+    window.onload = function () {
+        if ($("#status").text() == "取消收藏") {
+            $(".star.icon").addClass("yellow")
+        }
+    }
     $("#payBtn").popup({
         popup: $(".payMoney.popup"),
         on: "click",
@@ -246,28 +326,33 @@
         $('.m_item').toggleClass('m_mobile_hide');
     });
 
-    function starBlog(){
-        var flag1 = '<i class="orange star icon"></i> 已收藏';
-        var flag2 = '<i class="star icon"></i> 收藏';
-        if( $("#star").html() == flag1){
-
-            //取消收藏
-            $("#star").html(flag2)
-
-        }else{
+    function starBlog() {
+        if ($("#status").text() == "收藏") {
             //收藏
-            $("#star").html(flag1)
+            $(".star.icon").addClass("yellow")
+            $("#status").text("取消收藏");
             $.ajax({
                 url: "/blog/admin/addStar",
                 data: {
-                    id:[[${blog.id}]]
+                    id: [[${blog.id}]]
                 },
-                type: "post",
-                success: function () {
-                }
+                type: "post"
             })
+        } else {
+            //取消收藏
+            $(".star.icon").removeClass("yellow")
+            $("#status").text("收藏");
+            $.ajax({
+                url: "/blog/admin/removeStar",
+                data: {
+                    id: [[${blog.id}]]
+                },
+                type: "post"
+            })
+
         }
     }
+
     /*关灯 、开灯功能*/
     /*关灯按钮*/
     var cl = $(".close-light")
@@ -280,13 +365,16 @@
             $(".c").addClass("m_t_color_theme");
             $(".plcon").addClass("m_t_bc_color_gd");
             $(".ctp,.pl.reply,.date,.author").addClass("m_t_color_white");
-
+            $(".headFoot").addClass("dark");
+            $(".headFoot").removeClass("headAndFoot");
         } else {
             cl.html(flag);
             $(".ct").removeClass("inverted");
             $(".c").removeClass("m_t_color_theme");
             $(".plcon").removeClass("m_t_bc_color_gd");
             $(".ctp,.pl.reply,.date,.author").removeClass("m_t_color_white");
+            $(".headFoot").removeClass("dark");
+            $(".headFoot").addClass("headAndFoot");
         }
     });
     var serurl =/*[[#{blog.url}]]*/"";
@@ -354,30 +442,29 @@
     function reply(obj) {
         var commentId = $(obj).data('commentid');
         var commentNickname = $(obj).data('commentnickname');
-        $("[name='content']").attr("placeholder", "@"+commentNickname).focus();
+        $("[name='content']").attr("placeholder", "@" + commentNickname).focus();
         $("[name='parentComment.id']").val(commentId);
-        $(window).scrollTo($('#comment-form'),300);
+        $(window).scrollTo($('#comment-form'), 300);
     }
 
     function postData() {
-        $("#comment-container").load(/*[[@{/comments}]]*/"",{
-            "parentComment.id" : $("[name='parentComment.id']").val(),
-            "blog.id" : $("[name='blog.id']").val(),
+        $("#comment-container").load(/*[[@{/comments}]]*/"", {
+            "parentComment.id": $("[name='parentComment.id']").val(),
+            "blog.id": $("[name='blog.id']").val(),
             "nickname": $("[name='nickname']").val(),
-            "email"   : $("[name='email']").val(),
-            "content" : $("[name='content']").val()
-        },function (responseTxt, statusTxt, xhr) {
+            "email": $("[name='email']").val(),
+            "content": $("[name='content']").val()
+        }, function (responseTxt, statusTxt, xhr) {
 //        $(window).scrollTo($('#comment-container'),500);
             clearContent();
         });
     }
+
     function clearContent() {
         $("[name='content']").val('');
         $("[name='parentComment.id']").val(-1);
         $("[name='content']").attr("placeholder", "请输入评论信息...");
     }
-
-
 
 
     /*监测滚动*/
@@ -395,6 +482,7 @@
             }
         }
     })
+
 </script>
 
 </body>

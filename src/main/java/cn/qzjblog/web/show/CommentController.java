@@ -24,7 +24,7 @@ public class CommentController {
     private CommentServiceImpl commentService;
     @Autowired
     private BlogServiceImpl blogService;
-    @Value("${comment.avatar}")
+    @Value("${user.manAvatar}")
     private String avatar;
 
     /*获取整个评论列表*/

@@ -26,7 +26,7 @@
                         </div>
                         <!--篇数字样-->
                         <div class="right aligned column">
-                            共 <h3 th:text="${page.getTotal()}" class="ui orange header m_inline_block">20</h3> 篇
+                            共 <h3 th:text="${page.getTotal()}" class="ui m_t_color_name header m_inline_block">20</h3> 篇
                         </div>
                     </div>
                 </div>
@@ -53,8 +53,8 @@
                                             <img th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                                                  class="ui avatar image">
                                             <!--作者名-->
-                                            <div class="content"><a href="#" th:text="${blog.user.nickname}"
-                                                                    class=" header">一叶知秋</a></div>
+                                            <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
+                                           <span th:text="${blog.user.nickname}">一叶知秋</span>
                                         </div>
                                         <div class=" c item">
                                             <i class="calendar alternate outline icon"></i><span
@@ -69,7 +69,7 @@
                                 <div class="right aligned five wide column">
                                     <!--设置蓝色透明标签-->
                                     <a th:text="${blog.type.name}" th:href="@{/types/{id}(id=${blog.type.id})}"
-                                       class="ui m_padded_mini m_text_thin basic violet label">励志</a>
+                                       class="ui m_padded_mini m_text_thin basic m_t_color_name label">励志</a>
                                 </div>
                             </div>
                         </div>
@@ -93,12 +93,12 @@
                         <!--上一页-->
                         <div class="column">
                             <a th:href="@{/(current=${page.getCurrent()}-1)}"  th:unless="${page.getCurrent eq 1}"
-                               class="ui basic violet mini button">上一页</a>
+                               class="ui basic m_t_color_name mini button">上一页</a>
                         </div>
                         <!--下一页-->
                         <div class="right aligned column">
                             <a th:href="@{/(current=${page.getCurrent()}+1)}" th:unless="${page.getCurrent() eq lastPage}"
-                               class="ui basic violet mini button">下一页</a>
+                               class="ui basic m_t_color_name mini button">下一页</a>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                     <div class="ui ct attached fluid  vertical menu">
                         <a th:href="@{/types/{id}(id=${type.id})}" class="item" th:each="type : ${types}">
                             <span th:text="${type.name}">学习笔记</span>
-                            <div class="ui basic violet label" th:text="${type.count}">13</div>
+                            <div class="ui basic m_t_bc_color_name label" th:text="${type.count}">13</div>
                         </a>
                     </div>
                 </div>
@@ -144,7 +144,7 @@
                     <!--标签列表-->
                     <div class="ui ct gray segment">
                         <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${tags}"
-                           class="ui m_margin_tb orange basic label">
+                           class="ui m_margin_tb m_t_bc_color_theme basic label">
                             <span th:text="${tag.name}">学习笔记</span>
                             <div class="detail" th:text="${tag.count}">2</div>
                         </a>
@@ -175,7 +175,7 @@
 <div th:replace="_fragments :: tools"></div>
 
 <!--底部-->
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 
@@ -211,16 +211,20 @@
             $(".plcon").addClass("m_t_bc_color_gd");
             $(".cc,.c").removeClass("basic");
             $(".cc,.c1").addClass("m_t_color_white");
-
+            $(".headFoot").addClass("dark");
+            $(".headFoot").removeClass("headAndFoot");
             $(".closeLight").addClass("m_t_color_theme");
         } else {
             cl.html(flag);
             $(".c").removeClass("m_t_color_white");
             $(".ct").removeClass("inverted");
+
             $(".closeLight").removeClass("m_t_color_theme");
             $(".c,.c1").removeClass("m_t_color_white");
             $(".c,.cc").addClass("basic");
             $(".plcon").removeClass("m_t_bc_color_gd");
+            $(".headFoot").removeClass("dark");
+            $(".headFoot").addClass("headAndFoot");
         }
     });
     /*生成二维码*/

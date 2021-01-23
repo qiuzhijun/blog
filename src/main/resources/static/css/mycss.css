@@ -280,10 +280,12 @@
 
 /*color*/
 .m_t_color_name {
-    color: #BA55D3 !important;
+    color: #0d6b84 !important;
 }
+
+
 .m_t_bc_color_name {
-    background-color: #BA55D3 !important;
+    background-color: #0d6b84 !important; !important;
 }
 
 .m_t_bc_color_white {
@@ -295,29 +297,37 @@
 }
 
 .m_t_color_theme {
-    color: #DDA0DD !important;
+    color: khaki !important;
 }
 
+
 .m_t_bc_color_theme {
-    background-color: #DDA0DD !important;
+    background-color: khaki !important;
 }
 
 .m_t_bc_color_gd {
     background-color: #0F192A !important;
-    color: #DDA0DD !important;
+    color:khaki !important;
 }
 
 .m_t_color_white {
     color: white !important;
 }
 .m_t_color_orange {
-    color: orange !important;
+    color: #c450ba !important;
 }
 
 .m_t_bc_color_black {
     background-color: black !important;
 }
 
+.dark {
+    background-color: darkgrey !important;
+}
+
+.headAndFoot{
+    background-color: beige !important;
+}
 .m_t_bc_color_bottom {
     background-color: rebeccapurple !important;
 }

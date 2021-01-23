@@ -5,14 +5,16 @@ spring:
   thymeleaf:
     mode: HTML
   profiles:
-    active: dev
+    active: pro
   servlet:
     multipart:
       max-file-size: 10MB
 server:
   servlet:
     context-path: /blog
-comment.avatar: /images/boy.png
+user.manAvatar: /images/boy.png
+user.womanAvatar: /images/girl.png
+blog.defaultPicture: /images/wel.jpg
 #打印sql语句
 mybatis-plus:
   configuration:

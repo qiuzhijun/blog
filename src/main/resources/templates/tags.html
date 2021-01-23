@@ -26,7 +26,7 @@
         </div>
         <!--标签列表-->
         <div  class="ui ct attached  segment">
-            <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${tags}" th:classappend="${tag.id==activeTagId} ? 'orange'" class="ui large m_margin_tag m_padded_mini basic label">
+            <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${tags}" th:classappend="${tag.id==activeTagId} ? 'm_t_bc_color_theme'" class="ui large m_margin_tag m_padded-small basic label">
                 <span th:text="${tag.name}" >JavaSE</span>
                 <div class="detail" th:text="${tag.count}">23</div>
             </a>
@@ -54,9 +54,8 @@
                                         <img th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                                              class="ui avatar image">
                                         <!--作者名-->
-                                        <div class="content"><a href="#" th:text="${blog.user.nickname}"
-                                                                class=" header">一叶知秋</a>
-                                        </div>
+                                        <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
+                                        <span th:text="${blog.user.nickname}">一叶知秋</span>
                                     </div>
                                     <div class="item">
                                         <i class="calendar alternate outline icon"></i><span
@@ -70,7 +69,7 @@
                             <div class="row">
                                 <div class="column">
                                     <a th:href="@{/tags/{id}(id=${tag.id})}" th:each="tag : ${blog.tags}"
-                                       th:text="${tag.name}"  th:classappend="${tag.id==activeTagId} ? 'orange'" class="ui  basic label m_margin_tag_small">JavaSE</a>
+                                       th:text="${tag.name}"  th:classappend="${tag.id==activeTagId} ? 'm_t_bc_color_theme'" class="ui  basic label m_margin_tag_small">JavaSE</a>
                                 </div>
                             </div>
                         </div>
@@ -94,13 +93,13 @@
                     <div class="column">
                         <a th:href="@{'/tags/'+${activeTagId}(current=${page.getCurrent()}-1)}"
                            th:unless="${page.getCurrent eq 1}"
-                           class="ui basic violet mini button">上一页</a>
+                           class="ui basic m_t_color_name mini button">上一页</a>
                     </div>
                     <!--下一页-->
                     <div class="right aligned column">
                         <a  th:href="@{'/tags/'+${activeTagId}(current=${page.getCurrent()}+1)}"
                             th:unless="${page.getCurrent() eq lastPage}"
-                            class="ui basic violet mini button">下一页</a>
+                            class="ui basic m_t_color_name mini button">下一页</a>
                     </div>
                 </div>
             </div>
@@ -111,7 +110,7 @@
 
 <div th:replace="_fragments :: tools"></div>
 <!--底部-->
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
@@ -147,7 +146,8 @@
             $(".plcon").addClass("m_t_bc_color_gd");
             $(".cc,.c").removeClass("basic");
             $(".cc,.c1").addClass("m_t_color_white");
-
+            $(".headFoot").addClass("dark");
+            $(".headFoot").removeClass("headAndFoot");
 
         } else {
             cl.html(flag);
@@ -157,6 +157,8 @@
             $(".c,.c1").removeClass("m_t_color_white");
             $(".c,.cc").addClass("basic");
             $(".plcon").removeClass("m_t_bc_color_gd");
+            $(".headFoot").removeClass("dark");
+            $(".headFoot").addClass("headAndFoot");
         }
     });
 

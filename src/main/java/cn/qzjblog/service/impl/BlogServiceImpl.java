@@ -10,11 +10,14 @@ import cn.qzjblog.myException.NotFoundException;
 import cn.qzjblog.service.BlogService;
 import cn.qzjblog.util.MarkdownUtils;
 import cn.qzjblog.util.MyBeanUtils;
+import cn.qzjblog.util.PictureUtils;
 import cn.qzjblog.vo.BlogQuery;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +46,8 @@ public class BlogServiceImpl implements BlogService {
 
     @Autowired
     private QueryWrapper wrapper;
+    @Value("${blog.defaultPicture}")
+    private String defaultPicture;
 
 
     //后台查询
@@ -87,15 +92,27 @@ public class BlogServiceImpl implements BlogService {
 
     //通过博客id，浏览博客详情，转换markdown并增加浏览量
     @Override
-    public Blog getAndConvert(Long id) {
+    public Blog getAndConvert(Long id,User user) {
         Blog blog = blogMapper.selectById(id);
         if (blog == null) {
             throw new NotFoundException("该博客不存在");
         }
         Blog b = new Blog();
         BeanUtils.copyProperties(blog, b);
-        return blogInit(b, id);
+        Blog b1 = blogInit(b, id);
+        if(user!=null){
+            Integer count = blogMapper.selectIsStar(user.getId(),id);
+            b1.setIsStar("收藏");
+            if(count == 1){
+                b1.setIsStar("取消收藏");
+            }
+        }
+        return b1;
     }
+
+
+
+
 
     //给blog赋值
     Blog blogInit(Blog b, Long id) {
@@ -125,7 +142,9 @@ public class BlogServiceImpl implements BlogService {
     //修改博客的时候，取得type和tag列表
     @Override
     public Blog getBlogById(Long id) {
+
         Blog b = blogMapper.selectById(id);
+
         b.setType(typeMapper.selectTypeByBlogId(id));
         b.setTags(tagMapper.selectTagsByBlogId(id));
         return b;
@@ -148,8 +167,6 @@ public class BlogServiceImpl implements BlogService {
     //归档通过年份查询
     @Override
     public Map<String, List<Blog>> archiveBlog() {
-
-
         List<String> years = blogMapper.findGroupByYear();
         Map<String, List<Blog>> map = new HashMap<>();
         for (String year : years) {
@@ -194,7 +211,11 @@ public class BlogServiceImpl implements BlogService {
     //添加博客
     @Override
     public Blog saveBlog(Blog blog) {
-
+        String url = blog.getFirstPicture();
+        int s = PictureUtils.testWsdlConnection(url);
+        if(s != 200){
+            blog.setFirstPicture(defaultPicture);
+        }
         blogMapper.insert(blog);
         List<Tag> tags = blog.getTags();
         for (Tag t : tags) {
@@ -213,7 +234,11 @@ public class BlogServiceImpl implements BlogService {
         }
         BeanUtils.copyProperties(blog, b, MyBeanUtils.getNullPropertyNames(blog));
         b.setUpdateTime(new Date());
-
+        String url = b.getFirstPicture();
+        int s = PictureUtils.testWsdlConnection(url);
+        if(s != 200){
+            b.setFirstPicture(defaultPicture);
+        }
         wrapper.eq("id", id);
         blogMapper.update(b, wrapper);
         wrapper.clear();

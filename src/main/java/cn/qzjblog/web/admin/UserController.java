@@ -1,26 +1,25 @@
 package cn.qzjblog.web.admin;
 
+import cn.hutool.extra.mail.MailUtil;
 import cn.qzjblog.entity.Blog;
 import cn.qzjblog.entity.User;
 import cn.qzjblog.service.impl.UserServiceImpl;
 import cn.qzjblog.util.MD5Utils;
+import cn.qzjblog.util.PictureUtils;
 import cn.qzjblog.vo.Table;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Create by qzj on 2021/01/18 20:19
@@ -29,10 +28,13 @@ import java.util.*;
 @RequestMapping("/admin")
 public class UserController {
     private final String RETURN = "adminHtml/profile";
-    private final String REDIRECT_RETURN = "redirect:adminHtml/profile";
 
     @Autowired
     private UserServiceImpl userService;
+    @Value("${user.manAvatar}")
+    private String manAvatar;
+    @Value("${user.womanAvatar}")
+    private String womanAvatar;
 
     @GetMapping("/profile")
     public String user(HttpSession session, Model model) {
@@ -72,56 +74,75 @@ public class UserController {
         return userService.updateNickname(user);
     }
 
-    //注册用户
-    @PostMapping("/addUser")
-    @ResponseBody
-    public User addUser() {
-        return null;
-    }
+
 
     //添加收藏文章
     @PostMapping("/addStar")
+    @ResponseBody
     public void addStar(@RequestParam("id") Long blogId, HttpSession session) {
         User user = (User) session.getAttribute("user");
         userService.addStar(blogId, user.getId());
     }
 
-
-    @GetMapping(value = "/file")
-    public String file() {
-        return "test/test";
+    //添加收藏文章
+    @PostMapping("/removeStar")
+    @ResponseBody
+    public void removeStar(@RequestParam("id") Long blogId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        userService.removeStar(blogId, user.getId());
     }
 
 
     @PostMapping(value = "/updateAvatar")
-    public String updateAvatar(@RequestParam(value = "file") MultipartFile file,HttpSession session, Model model, HttpServletRequest request) {
-        if (file.isEmpty()) {
-            model.addAttribute("msg","文件不存在");
-        }
-        String fileName = file.getOriginalFilename();  // 文件名
-        if(!(fileName.endsWith(".png")||fileName.endsWith(".jpg")||fileName.endsWith(".jpeg")||fileName.endsWith(".bmp"))){
-            model.addAttribute("msg","文件类型错误");
-        }
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
-        String filePath = "/images/user-avatar/"; // 上传后的路径
-        fileName = UUID.randomUUID() + suffixName; // 新文件名
-        File dest = new File(filePath + fileName);
-        if (!dest.getParentFile().exists()) {
-            dest.getParentFile().mkdirs();
-        }
-        try {
-            file.transferTo(dest);
-            String filename = "/images/user-avatar/" + fileName;
-            User u = (User) session.getAttribute("user");
-            u.setAvatar(fileName);
+    public String updateAvatar(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "url") String url, HttpSession session, Model model, HttpServletRequest request) {
+        User u = (User) session.getAttribute("user");
+        if (!("".equals(url))) {
+            int s = PictureUtils.testWsdlConnection(url);
+            if (s == 200) {
+                u.setAvatar(url);
+            } else {
+                if ("男".equals(u.getSex())) {
+                    u.setAvatar(manAvatar);
+                } else {
+                    u.setAvatar(womanAvatar);
+                }
+            }
             userService.updateAvatar(u);
-            model.addAttribute("filename", filename);
-            model.addAttribute("msg","传输成功");
-            model.addAttribute("user",u);
-        } catch (IOException e) {
-            model.addAttribute("msg",e.getMessage());
-            return RETURN;
+
         }
+        if (!("".equals(file.getOriginalFilename()))) {
+            if (file.isEmpty()) {
+                model.addAttribute("msg", "文件不存在");
+                model.addAttribute("user", u);
+                session.setAttribute("user", u);
+                return RETURN;
+            }
+            String fileName = file.getOriginalFilename();  // 文件名
+            if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".bmp"))) {
+                model.addAttribute("msg", "文件类型错误");
+                session.setAttribute("user", u);
+                model.addAttribute("user", u);
+                return RETURN;
+            }
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
+            String path = this.getClass().getResource("/").getPath() + "/static/images/user-avatar/";
+            fileName = UUID.randomUUID() + suffixName; // 新文件名
+            File dest = new File(path + fileName);
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }
+            try {
+                file.transferTo(dest);
+                String filename = "/images/user-avatar/" + fileName;
+                u.setAvatar(filename);
+                userService.updateAvatar(u);
+            } catch (IOException e) {
+                model.addAttribute("msg", e.getMessage());
+            }
+        }
+        model.addAttribute("user", u);
+        session.setAttribute("user", u);
         return RETURN;
     }
+
 }

@@ -20,7 +20,7 @@
             <input type="hidden" name="id" th:value="*{id}">
             <div class="required field">
                 <div class="ui left labeled input required">
-                    <div class="ui required selection compact orange basic dropdown label">
+                    <div class="ui required selection compact m_t_bc_color_theme basic dropdown label">
                         <input type="hidden" value="原创" name="flag" th:value="*{flag}" >
                         <i class="dropdown icon"></i>
                         <div class="text">请选择</div>
@@ -92,25 +92,25 @@
                 <div class="ui field">
                     <div class="ui checkbox">
                         <input type="checkbox" th:checked="*{recommended}" checked id="recommended" name="recommended" class="hidden">
-                        <label for="recommended" style="color: orange">推荐</label>
+                        <label for="recommended" class="black">推荐</label>
                     </div>
                 </div>
                 <div class="ui field">
                     <div class="ui checkbox">
-                        <input type="checkbox" th:checked="*{shareStatement}"  checked id="shareStatement" name="shareStatement" class="hidden">
-                        <label for="shareStatement" style="color: orange">转载声明</label>
+                        <input type="checkbox"  th:checked="*{shareStatement}"  checked id="shareStatement" name="shareStatement" class="hidden">
+                        <label for="shareStatement" class="black">转载声明</label>
                     </div>
                 </div>
                 <div class="ui field">
                     <div class="ui checkbox">
                         <input type="checkbox" th:checked="*{appreciation}"  checked id="appreciation" name="appreciation" class="hidden">
-                        <label for="appreciation" style="color: orange">赞赏</label>
+                        <label for="appreciation" class="black">赞赏</label>
                     </div>
                 </div>
                 <div class="ui field">
                     <div class="ui checkbox">
                         <input type="checkbox" th:checked="*{commentabled}"  checked id="commentabled" name="commentabled" class="hidden">
-                        <label for="commentabled" style="color: orange">评论</label>
+                        <label for="commentabled" class="black">评论</label>
                     </div>
                 </div>
             </div>

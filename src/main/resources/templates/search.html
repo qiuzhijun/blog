@@ -61,7 +61,7 @@
                         <div class="right aligned five wide column">
                             <!--设置蓝色透明标签-->
                             <a th:text="${blog.type.name}" href="#" target="_blank"
-                               class="ui m_padded_mini m_text_thin basic violet label">励志</a>
+                               class="ui m_padded_mini m_text_thin basic m_t_color_name label">励志</a>
                         </div>
                     </div>
                 </div>
@@ -82,11 +82,11 @@
                 <!--上一页-->
                 <div class="column">
                     <a th:href="@{/(page=${page.getCurrent()}-1)}" th:unless="${page.getCurrent eq 1}"
-                       class="ui basic violet mini button">上一页</a>
+                       class="ui basic m_t_color_name mini button">上一页</a>
                 </div>
                 <div class="right aligned column">
                     <a th:href="@{/(page=${page.getCurrent()}+1)}" th:unless="${page.getCurrent() eq lastPage}"
-                       class="ui basic blue mini button">下一页</a>
+                       class="ui basic m_t_color_name mini button">下一页</a>
                 </div>
             </div>
         </div>
@@ -131,7 +131,8 @@
             $(".plcon").addClass("m_t_bc_color_gd");
             $(".cc,.c").removeClass("basic");
             $(".cc,.c1").addClass("m_t_color_white");
-
+            $(".headFoot").addClass("dark");
+            $(".headFoot").removeClass("headAndFoot");
 
         } else {
             cl.html(flag);
@@ -140,6 +141,8 @@
             $(".c,.c1").removeClass("m_t_color_white");
             $(".c,.cc").addClass("basic");
             $(".plcon").removeClass("m_t_bc_color_gd");
+            $(".headFoot").removeClass("dark");
+            $(".headFoot").addClass("headAndFoot");
         }
     });
     /*生成二维码*/

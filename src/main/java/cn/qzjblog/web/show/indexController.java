@@ -1,6 +1,7 @@
 package cn.qzjblog.web.show;
 
 import cn.qzjblog.entity.Blog;
+import cn.qzjblog.entity.User;
 import cn.qzjblog.service.impl.BlogServiceImpl;
 import cn.qzjblog.service.impl.TagServiceImpl;
 import cn.qzjblog.service.impl.TypeServiceImpl;
@@ -8,14 +9,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+
 
 
 @Controller
 public class indexController {
+
+
     @Autowired
     private BlogServiceImpl blogService;
     @Autowired
@@ -39,11 +42,11 @@ public class indexController {
     }
 
 
-
-
+    //博客详情
     @GetMapping("/blog/{id}")
-    public String blog(@PathVariable Long id, Model model) {
-        model.addAttribute("blog",blogService.getAndConvert(id));
+    public String blog(@PathVariable Long id, Model model, HttpSession session) {
+        User u = (User) session.getAttribute("user");
+        model.addAttribute("blog",blogService.getAndConvert(id,u));
         return "blog";
     }
 

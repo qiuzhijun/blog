@@ -43,6 +43,8 @@ public class Blog {
     private Long userId;
     @TableField("type_id")
     private Long typeId;
+    @TableField(exist = false)
+    private String isStar;//是否被收藏
     @Override
     public String toString() {
         return "Blog{" +

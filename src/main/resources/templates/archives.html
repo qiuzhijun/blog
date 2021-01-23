@@ -22,7 +22,7 @@
                 </div>
                 <!--篇数字样-->
                 <div class="right aligned column">
-                    共&nbsp;<h3 th:text="${blogCount}" class="ui orange header m_inline_block">120 </h3>&nbsp;篇博客
+                    共&nbsp;<h3 th:text="${blogCount}" class="ui m_t_color_name header m_inline_block">120 </h3>&nbsp;篇博客
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                     <span th:text="${blog.title}">活着不是为了活着</span>
                     <div th:text="${#dates.format(blog.updateTime,'MM月 dd日')}" class="ui basic m_t_color_name left pointing m_padded_mini label">12月6日</div>
                     </span>
-                <div th:text="${blog.flag}" class="ui basic orange label">原创</div>
+                <div th:text="${blog.flag}" class="ui m_t_bc_color_name label">原创</div>
             </a>
         </div>
 
@@ -50,7 +50,7 @@
 </div>
 
 <!--底部-->
-<br/><br/><br/>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
 </footer>
 
@@ -85,12 +85,15 @@
             $(".ct").addClass("inverted");
             $(".c").addClass("m_t_color_white");
             $(".plcon").addClass("m_t_bc_color_gd");
-
+            $(".headFoot").addClass("dark");
+            $(".headFoot").removeClass("headAndFoot");
         } else {
             cl.html(flag);
             $(".ct").removeClass("inverted");
             $(".c").removeClass("m_t_color_white");
             $(".plcon").removeClass("m_t_bc_color_gd");
+            $(".headFoot").removeClass("dark");
+            $(".headFoot").addClass("headAndFoot");
         }
     });
     /*生成二维码*/
