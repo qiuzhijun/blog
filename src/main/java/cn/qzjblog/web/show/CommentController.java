@@ -38,17 +38,19 @@ public class CommentController {
     /*添加一条评论*/
     @PostMapping("/comments")
     public String Post(Comment comment, HttpSession session) {
-        comment = commentInit(comment, session);
-        commentService.saveComment(comment);
-        return "redirect:/comments/" + comment.getBlog().getId();
-    }
-
-    Comment commentInit(Comment comment, HttpSession session) {
         Long blogId = comment.getBlog().getId();
         comment.setBlogId(blogId);
-        comment.setBlog(blogService.getBlogById(blogId));
+        if (comment.getContent() != "" && comment.getEmail() != "" && comment.getNickname() != "") {
+            comment = commentInit(comment, session,comment.getBlogId());
+            commentService.saveComment(comment);
+        }
+        return "redirect:/comments/" + comment.getBlogId();
+    }
+
+    Comment commentInit(Comment comment, HttpSession session,Long id) {
+        comment.setBlog(blogService.getBlogById(id));
         comment.setParentCommentId(comment.getParentComment().getId());
-        User selectUser = blogService.selectUser(blogId);
+        User selectUser = blogService.selectUser(id);
         User sessionUser = (User) session.getAttribute("user");
         comment.setAdminComment(false);
         if (sessionUser != null) {

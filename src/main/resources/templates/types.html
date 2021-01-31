@@ -54,13 +54,13 @@
                                 <!--横列表-->
                                 <div class="ui mini horizontal link list">
 
-                                    <div class="item">
+                                    <div class="item" style="cursor: pointer">
                                         <!--插入图片-->
                                         <img th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                                              class="ui avatar image">
                                         <!--作者名-->
                                         <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
-                                        <span th:text="${blog.user.nickname}">作者名</span>
+                                        <span style="font-weight: bold;color: black" th:text="${blog.user.nickname}">作者名</span>
 
                                     </div>
                                     <div class=" c item">
@@ -170,7 +170,7 @@
 
     /*生成二维码*/
     var qrcode = new QRCode("qrcode", {
-        text: "http://qzjblog.cn/blog/types",
+        text: "http://qzjblog.cn/blog/types/-1",
         width: 90,
         height: 90,
         colorDark: "#BA55D3",

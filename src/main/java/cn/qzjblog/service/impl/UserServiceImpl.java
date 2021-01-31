@@ -1,8 +1,6 @@
 package cn.qzjblog.service.impl;
 
 import cn.qzjblog.entity.Blog;
-import cn.qzjblog.entity.Comment;
-import cn.qzjblog.entity.Tag;
 import cn.qzjblog.entity.User;
 import cn.qzjblog.mapper.UserMapper;
 import cn.qzjblog.service.UserService;
@@ -137,5 +135,24 @@ public class UserServiceImpl implements UserService {
             userMapper.updateById(user);
         }
         return user;
+    }
+
+    @Override
+    public User selectUserByEmail(String email) {
+        QueryWrapper<User> wrapper = new QueryWrapper();
+        wrapper.eq("email",email);
+        wrapper.eq("status",0);
+        User user = userMapper.selectOne(wrapper);
+        return user;
+    }
+
+    @Override
+    public User updatePsd(String email, String password) {
+        QueryWrapper<User> wrapper = new QueryWrapper();
+        wrapper.eq("email",email);
+        User u = userMapper.selectOne(wrapper);
+        u.setPassword(MD5Utils.code(password));
+        userMapper.update(u,wrapper);
+        return u;
     }
 }

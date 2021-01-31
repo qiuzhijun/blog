@@ -3,3 +3,5 @@
 from = 1185538241@qq.com
 #授权码，某些邮箱需要为SMTP服务单独设置密码
 pass = hcgfkxgmceuvbaae
+#端口号
+port = 587

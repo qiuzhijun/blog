@@ -24,15 +24,12 @@ public interface BlogMapper extends BaseMapper<Blog> {
     List<String> findGroupByYear();
 
     @Select("select * from t_blog b where DATE_FORMAT(b.create_time,'%Y') = #{year}")
-    List<Blog> findByYear(String year);
+    List<Blog> findByYear(@Param("year") String year);
 
     @Select("select count(1) from t_blog b join (select blog_id from t_blog_tags where tags_id = #{tagId}) t on id = t.blog_id and b.published=1")
     Long countTag(@Param("tagId") Long tagId);
     @Select("select b.* from t_blog b join (select blog_id from t_blog_tags where tags_id = #{tagId}) t on id = t.blog_id and b.published=1 limit #{start},#{size}")
-    List<Blog> selectBlogByTagId(Long tagId,@Param("start")Long start,Long size);
-    @Select("select * from t_blog b,t_user u where b.user_id = u.id limit #{page.current},#{page.size}")
-    Page<Blog> selectAllBlog(@Param("page") Page<Blog> page);
-
+    List<Blog> selectBlogByTagId(@Param("tagId")Long tagId,@Param("start")Long start,@Param("size")Long size);
     @Select("select count(1) from t_user_blog where user_id=#{userId} and blog_id = #{blogId}")
-    Integer selectIsStar(Long userId, Long blogId);
+    Integer selectIsStar(@Param("userId") Long userId, @Param("blogId") Long blogId);
 }

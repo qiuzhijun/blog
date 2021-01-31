@@ -170,6 +170,9 @@
 .m_margin_left_small {
     margin-left: 2em !important;
 }
+.m_margin_left_mini {
+    margin-left: 1.5em !important;
+}
 
 .m_margin_left_big {
     margin-left: 8em !important;

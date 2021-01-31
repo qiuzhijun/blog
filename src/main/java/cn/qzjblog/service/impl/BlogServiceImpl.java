@@ -14,7 +14,6 @@ import cn.qzjblog.util.PictureUtils;
 import cn.qzjblog.vo.BlogQuery;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +51,7 @@ public class BlogServiceImpl implements BlogService {
 
     //后台查询
     @Override
-    public Page<Blog> listBlog(Page page, BlogQuery blog,User user) {
+    public Page<Blog> listBlog(Page page, BlogQuery blog, User user) {
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
         if (!"".equals(blog.getTitle()) && blog.getTitle() != null) {
             //如果传来的标题不为空或空字符串，就添加模糊查询，从传回来的title拼接模糊查询
@@ -68,10 +67,10 @@ public class BlogServiceImpl implements BlogService {
         }
         wrapper.orderByDesc("update_time");
         Page<Blog> blogPage = null;
-        if("普通用户".equals(user.getType())){
-            wrapper.eq("user_id",user.getId());
+        if ("普通用户".equals(user.getType())) {
+            wrapper.eq("user_id", user.getId());
             blogPage = blogMapper.selectPage(page, wrapper);
-        }else{
+        } else {
             blogPage = blogMapper.selectPage(page, wrapper);
         }
         blogPage = addTypeAndUser(blogPage);
@@ -92,38 +91,38 @@ public class BlogServiceImpl implements BlogService {
 
     //通过博客id，浏览博客详情，转换markdown并增加浏览量
     @Override
-    public Blog getAndConvert(Long id,User user) {
+    public Blog getAndConvert(Long id, User user) {
         Blog blog = blogMapper.selectById(id);
         if (blog == null) {
             throw new NotFoundException("该博客不存在");
         }
         Blog b = new Blog();
+        //blog是原博客，b是要转换的博客
         BeanUtils.copyProperties(blog, b);
-        Blog b1 = blogInit(b, id);
-        if(user!=null){
-            Integer count = blogMapper.selectIsStar(user.getId(),id);
-            b1.setIsStar("收藏");
-            if(count == 1){
-                b1.setIsStar("取消收藏");
+        b = blogInit(b, id);
+        if (user != null) {
+            Integer count = blogMapper.selectIsStar(user.getId(), id);
+            b.setIsStar("收藏");
+            blog.setIsStar("收藏");
+            if (count == 1) {
+                b.setIsStar("取消收藏");
+                blog.setIsStar("取消收藏");
             }
         }
-        return b1;
+        return b;
     }
-
-
-
 
 
     //给blog赋值
     Blog blogInit(Blog b, Long id) {
-        b.setContent(MarkdownUtils.markdownToHtmlExtensions(b.getContent()));
-
         List<Tag> list = tagMapper.selectTagsByBlogId(id);
         b.setTags(list);
-        User user = userMapper.selectUser(b.getUserId());
+        Long userId = b.getUserId();
+        User user = userMapper.selectUser(userId);
         b.setUser(user);
         b.setView(b.getView() + 1);
         blogMapper.updateById(b);
+        b.setContent(MarkdownUtils.markdownToHtmlExtensions(b.getContent()));
         return b;
     }
 
@@ -154,8 +153,10 @@ public class BlogServiceImpl implements BlogService {
     Page<Blog> addTypeAndUser(Page<Blog> blogPage) {
         List<Blog> blogList = blogPage.getRecords();
         for (Blog b : blogList) {
-            User user = userMapper.selectUser(b.getUserId());
-            Type type = typeMapper.selectType(b.getTypeId());
+            Long userId = b.getUserId();
+            User user = userMapper.selectUser(userId);
+            Long typeId = b.getTypeId();
+            Type type = typeMapper.selectType(typeId);
             b.setUser(user);
             b.setType(type);
         }
@@ -184,9 +185,12 @@ public class BlogServiceImpl implements BlogService {
 
     List<Blog> addTagsAndUserAndType(List<Blog> blogList) {
         for (Blog blog : blogList) {
-            User user = userMapper.selectUser(blog.getUserId());
-            Type type = typeMapper.selectType(blog.getTypeId());
-            List<Tag> tags = tagMapper.selectTagsInBlog(blog.getId());
+            Long userId = blog.getUserId();
+            User user = userMapper.selectUser(userId);
+            Long typeId = blog.getTypeId();
+            Type type = typeMapper.selectType(typeId);
+            Long blogId = blog.getId();
+            List<Tag> tags = tagMapper.selectTagsInBlog(blogId);
             blog.setTags(tags);
             blog.setUser(user);
             blog.setType(type);
@@ -199,8 +203,8 @@ public class BlogServiceImpl implements BlogService {
     public Page<Blog> listBlog(Page<Blog> page, Long tagId) {
         Long current = page.getCurrent();
         Long size = page.getSize();
-        long start = (current-1) * 6;
-        List<Blog> blogList = blogMapper.selectBlogByTagId(tagId,start,size);
+        long start = (current - 1) * 6;
+        List<Blog> blogList = blogMapper.selectBlogByTagId(tagId, start, size);
         Long total = blogMapper.countTag(tagId);
         blogList = addTagsAndUserAndType(blogList);
         page.setTotal(total);
@@ -213,13 +217,15 @@ public class BlogServiceImpl implements BlogService {
     public Blog saveBlog(Blog blog) {
         String url = blog.getFirstPicture();
         int s = PictureUtils.testWsdlConnection(url);
-        if(s != 200){
+        if (s != 200) {
             blog.setFirstPicture(defaultPicture);
         }
         blogMapper.insert(blog);
         List<Tag> tags = blog.getTags();
         for (Tag t : tags) {
-            tagMapper.insertTagsInBlog(blog.getId(), t.getId());
+            Long blogId = blog.getId();
+            Long tagId = t.getId();
+            tagMapper.insertTagsInBlog(blogId, tagId);
         }
         return blog;
     }
@@ -236,7 +242,7 @@ public class BlogServiceImpl implements BlogService {
         b.setUpdateTime(new Date());
         String url = b.getFirstPicture();
         int s = PictureUtils.testWsdlConnection(url);
-        if(s != 200){
+        if (s != 200) {
             b.setFirstPicture(defaultPicture);
         }
         wrapper.eq("id", id);
@@ -260,7 +266,7 @@ public class BlogServiceImpl implements BlogService {
     public Page<Blog> listBlogByQuery(String query, Page<Blog> page) {
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
         wrapper.eq("published", 1);
-        wrapper.and(w -> w.eq("title", query).or().eq("content", query));
+        wrapper.and(w -> w.like("title", query).or().like("description", query));
         Page page1 = blogMapper.selectPage(page, wrapper);
         List<Blog> blogList = page1.getRecords();
         blogList = addTagsAndUserAndType(blogList);

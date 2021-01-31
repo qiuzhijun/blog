@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <title>Cealum博客-修改密码</title>
+</head>
+
+<body style="min-width: 1200px">
+
+<nav th:replace="adminHtml/_fragments :: menu()" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+</nav>
+<div class="m_padded_tb_big m_container">
+    <div class="ui  container">
+            <div id="two" class="ui segment ">
+                <div class="ui header m_font_big">账号设置</div>
+                <table class="ui table">
+                    <tr>
+                        <td>昵称:</td>
+                        <td><font id="name" th:text="${user.nickname}">不动声色</font></td>
+                        <td style="text-align: right"><a id="update_nickname" href="javascript:void(0)"><i
+                                class="small edit icon"></i>修改</a></td>
+                    </tr>
+                    <tr>
+                        <td>密码:</td>
+                        <td><font id="password">******</font></td>
+                        <td style="text-align: right"><a id="update_password" href="javascript:void(0)"><i
+                                class="small edit icon"></i>修改</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<!--底部-->
+<br/><br/><br/>
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m_opacity_mini m_padded_tb_big">
+</footer>
+<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+<!--/*/</th:block>/*/-->
+
+<script>
+    var psdReg = /^(?![^a-zA-Z]+$)(?!\D+$)[0-9a-zA-Z]{6,16}$/;
+
+
+    $("#update_password").click(function () {
+        $("#password").html("<div class='ui input focus'>"
+            + "<input type='text' id='update_password' onblur='inputPassword()' style='height: 30px'  name='password' placeholder='6-16的英文数字混合'>" +
+            "</div>");
+        $("#update_password").focus();
+    })
+
+    function inputPassword() {
+        var password = $("#update_password").val();
+        if (psdReg.test(password)) {
+            $.ajax({
+                url: "updatePassword",
+                data: {
+                    password: $("#update_password").val()
+                },
+                type: "post",
+                dateType: "json",
+                success: function (resp) {
+                    if (resp.password === undefined) {
+                        alert("修改失败")
+                        $("#update_password").text(content);
+                    } else {
+                        alert("修改成功")
+                        window.location.reload();
+                    }
+                }
+            })
+        } else {
+            alert("昵称不合法")
+        }
+    }
+
+
+</script>
+</body>
+</html>
+
+
+

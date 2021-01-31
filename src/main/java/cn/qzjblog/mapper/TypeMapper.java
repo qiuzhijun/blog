@@ -2,6 +2,7 @@ package cn.qzjblog.mapper;
 
 import cn.qzjblog.entity.Type;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public interface TypeMapper extends BaseMapper<Type> {
     List<Type> findTop(Integer size);
     //修改博客时获取的type名称
     @Select("select * from t_type t join (select type_id from t_blog where id = #{blogId}) b on t.id=b.type_id")
-    Type selectTypeByBlogId(Long blogId);
-    @Select("select t.* from t_type t where t.id = #{blogId}")
-    Type selectType(Long blogId);
+    Type selectTypeByBlogId(@Param("blogId") Long blogId);
+    @Select("select t.* from t_type t where t.id = #{typeId}")
+    Type selectType(@Param("typeId") Long typeId);
 
 }

@@ -14,14 +14,14 @@
     <div class="ui container">
         <div class="ui top attached ct  segment">
             <div class="ui horizontal link list ">
-                <div class="item">
+                <div class="item" style="cursor: pointer">
                     <!--插入图片-->
                     <img src="https://picsum.photos/id/200/100/100" th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                          class="ui avatar image">
                     <!--作者名-->
                     <div class="content">
                         <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
-                        <span th:text="${blog.user.nickname}" >一叶知秋</span></div>
+                        <span style="font-weight: bold;color: black" th:text="${blog.user.nickname}" >一叶知秋</span></div>
                 </div>
                 <div class="item c ">
                     <i class="calendar alternate outline icon"></i><span
@@ -86,13 +86,31 @@
             <img style="margin: 0 auto;" th:src="@{${blog.firstPicture}}" alt="图片走丢了QWQ。"
                  class="ui rounded image">
         </div>
+        <div class="ui modal" id="callModal">
+            <div class="header">站主微信</div>
+            <div class="image content">
+                <img class="image" width="300px" th:src="@{/images/wechat.png}">
+                <div class="description">
+                    <p>此网站暂未开启社交系统</p>
+                    <p>您可以通过微信扫码直接联系站主</p>
+                    <p>如您有更好的想法也可联系我</p>
+                    <p>期待大家的加入，让此网站变得越来越好！</p><br><br>
+                    <p style="font-weight: 20">*Q：如何生成一个随机字符串？  A：让新手退出vim*</p>
+                    <p style="font-weight: 20">*Q：你知道为什么在用某种绝世神功之前要大声喊出来么？
+                        A：因为函数在调用之前要先声明。*</p>
+                </div>
+            </div>
+        </div>
         <!--博客版权-->
         <div th:if="${blog.shareStatement}" class="ui ct  attached positive message">
             <div class="ui middle aligned grid">
                 <!--左边-->
                 <div class="eleven wide column">
                     <ul class="list">
-                        <li>作者：<span th:utext="${blog.user.nickname}"></span> [<a th:href="@{/profile}">联系作者</a>]
+                        <li>作者：<span th:utext="${blog.user.nickname}"></span> [<a href="javascript:void(0)" onclick="function callMe() {
+                            $('#callModal').modal('show');
+                        }
+                        callMe()">联系作者</a>]
                         </li>
                         <li>发表时间：<span th:text="${#dates.format(blog.updateTime,'yyyy-MM-dd HH:mm')}"></span></li>
                         <li>版权声明：自由转载-非商用-保持署名</li>
@@ -261,11 +279,11 @@
                 <br>
                 <div id="nick" style='width: 100%' class="ui field icon"></div>
                 <div style="width: 100%" class="field ui icon input">
-                    <input type="text" name="email" placeholder="邮箱">
+                    <input type="text" name="emailQ" placeholder="邮箱">
                     <i id="checkEmail" class=""></i>
                 </div>
                 <div style="width: 100%" class="field  ui icon input">
-                    <input type="password" name="password" placeholder="密码(6-16位英文数字混合）">
+                    <input type="password" name="passwordQ" placeholder="密码(6-16位英文数字混合）">
                     <i id="checkPassword" class=""></i>
                 </div>
                 <div class="field">
@@ -332,7 +350,7 @@
             $(".star.icon").addClass("yellow")
             $("#status").text("取消收藏");
             $.ajax({
-                url: "/blog/admin/addStar",
+                url: "/admin/addStar",
                 data: {
                     id: [[${blog.id}]]
                 },
@@ -343,7 +361,7 @@
             $(".star.icon").removeClass("yellow")
             $("#status").text("收藏");
             $.ajax({
-                url: "/blog/admin/removeStar",
+                url: "/admin/removeStar",
                 data: {
                     id: [[${blog.id}]]
                 },
@@ -377,11 +395,10 @@
             $(".headFoot").addClass("headAndFoot");
         }
     });
-    var serurl =/*[[#{blog.url}]]*/"";
-    var url = /*[[@{/blog/{id}(id=${blog.id})}]]*/"";
+    var url = /*[[@{/{id}(id=${blog.id})}]]*/"";
     /*生成二维码*/
     var qrcode = new QRCode("qrcode", {
-        text: serurl + url,
+        text: "http://qzjblog.cn/blog" + url,
         width: 90,
         height: 90,
         colorDark: "#BA55D3",
@@ -411,7 +428,7 @@
                 identifier: 'nickname',
                 rules: [{
                     type: 'empty',
-                    prompt: '请输入你的昵称'
+                    prompt: '请输入你的大名'
                 }]
             },
             type: {
@@ -484,6 +501,5 @@
     })
 
 </script>
-
 </body>
 </html>

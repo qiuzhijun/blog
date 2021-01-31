@@ -35,7 +35,8 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentMapper.selectList(wrapper);
         wrapper.clear();
         for (Comment comment : commentList) {
-            List<Comment> replyComments = commentMapper.selectReplyComments(comment.getId(),blogId);
+            Long commentId = comment.getId();
+            List<Comment> replyComments = commentMapper.selectReplyComments(commentId,blogId);
             comment.setReplyComments(replyComments);
         }
         //应该返回带有子评论的  所有顶级评论
@@ -44,8 +45,8 @@ public class CommentServiceImpl implements CommentService {
             List<Comment> replyComments = ListUtils.removeDuplicate(comment.getReplyComments());
             comment.setReplyComments(replyComments);
             for(Comment reply:replyComments){
-
-                Comment parentComment = commentMapper.selectParentComment(reply.getId());
+                Long id = reply.getId();
+                Comment parentComment = commentMapper.selectParentComment(id);
                 reply.setParentComment(parentComment);
             }
         }

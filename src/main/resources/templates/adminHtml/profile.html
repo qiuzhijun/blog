@@ -95,13 +95,13 @@
                                     </div>
                                 </div>
 
-                                <div class="three wide column">
-                                    <div style="font-size: 30px;height:140px;text-align:center;
+                                <div class="four wide column">
+                                    <div style="font-size: 24px;height:140px;text-align:center;
                                     display: table-cell;
                                     vertical-align:middle" th:text="${user.nickname}">用户姓名
                                     </div>
                                 </div>
-                                <div class="eleven wide column">
+                                <div class="six wide column">
                                 </div>
                             </div>
                         </div>
@@ -231,7 +231,7 @@
 <!--/*/</th:block>/*/-->
 
 <script>
-    var regExp = /^.{2,8}$/
+    var regExp = /^.{2,6}$/
     var psdReg = /^(?![^a-zA-Z]+$)(?!\D+$)[0-9a-zA-Z]{6,16}$/;
 
     function dis() {
@@ -300,14 +300,14 @@
                 }
             })
         } else {
-            alert("昵称不合法")
+            alert("密码太简单了~")
         }
     }
 
 
     $("#update_nickname").click(function () {
         $("#name").html("<div class='ui input focus'>"
-            + "<input type='text' id='update_nickname' onblur='input()' style='height: 30px'  name='nickname' placeholder='昵称2~8个字符'>" +
+            + "<input type='text' id='update_nickname' onblur='input()' style='height: 30px'  name='nickname' placeholder='昵称2~6个字符'>" +
             "</div>");
         $("#update_nickname").focus();
     })
@@ -333,7 +333,7 @@
                 }
             })
         } else {
-            alert("密码不合法")
+            alert("请换一个昵称试试哦")
         }
     }
 

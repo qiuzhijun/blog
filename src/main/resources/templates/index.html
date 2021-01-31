@@ -33,8 +33,11 @@
 
                 <!--中间部分,连接-->
                 <div th:each="blog : ${page.getRecords()}" class="ui attached  ct  segment">
+
+
                     <!--文章部分-->
                     <div class="ui middle aligned mobile reversed stackable grid">
+
                         <!--左边文章部分-->
                         <div class="eleven wide column">
                             <h3 class="ui date header"><a th:href="@{/blog/{id}(id=${blog.id})}" target="_blank"
@@ -48,13 +51,13 @@
                                     <!--横列表-->
                                     <div class="ui mini horizontal link list">
 
-                                        <div class="item">
-                                            <!--插入图片-->
+                                        <div style="cursor: pointer" class="item">
                                             <img th:src="@{${blog.user.avatar}}" alt="图片走丢了QWQ。"
                                                  class="ui avatar image">
                                             <!--作者名-->
                                             <span class="ui mini basic m_t_color_name  label m_padded_mini">博主</span>
-                                           <span th:text="${blog.user.nickname}">一叶知秋</span>
+                                            <span style="font-weight: bold;color: black"
+                                                  th:text="${blog.user.nickname}">一叶知秋</span>
                                         </div>
                                         <div class=" c item">
                                             <i class="calendar alternate outline icon"></i><span
@@ -88,16 +91,17 @@
 
 
                 <!--下方bottom部分,连接-->
-                <div th:if="${(page.getTotal)-(page.getSize())>=1}"  class="ui ct attached bottom segment">
-                    <div   class="ui middle aligned two column grid">
+                <div th:if="${(page.getTotal)-(page.getSize())>=1}" class="ui ct attached bottom segment">
+                    <div class="ui middle aligned two column grid">
                         <!--上一页-->
                         <div class="column">
-                            <a th:href="@{/(current=${page.getCurrent()}-1)}"  th:unless="${page.getCurrent eq 1}"
+                            <a th:href="@{/(current=${page.getCurrent()}-1)}" th:unless="${page.getCurrent eq 1}"
                                class="ui basic m_t_color_name mini button">上一页</a>
                         </div>
                         <!--下一页-->
                         <div class="right aligned column">
-                            <a th:href="@{/(current=${page.getCurrent()}+1)}" th:unless="${page.getCurrent() eq lastPage}"
+                            <a th:href="@{/(current=${page.getCurrent()}+1)}"
+                               th:unless="${page.getCurrent() eq lastPage}"
                                class="ui basic m_t_color_name mini button">下一页</a>
                         </div>
                     </div>
@@ -114,7 +118,7 @@
                                 <i class="idea icon"></i>分类
                             </div>
                             <div class="right aligned  column">
-                                <a th:href="@{/types/-1}" class="c m_t_color_name" >更多<i
+                                <a th:href="@{/types/-1}" class="c m_t_color_name">更多<i
                                         class="angle  double right icon"></i></a>
                             </div>
                         </div>
@@ -136,7 +140,7 @@
                                 <i class="tags icon"></i>标签
                             </div>
                             <div class="right aligned column">
-                                <a th:href="@{/tags/-1}" class="c m_t_color_name" >更多<i
+                                <a th:href="@{/tags/-1}" class="c m_t_color_name">更多<i
                                         class="angle double right icon"></i></a>
                             </div>
                         </div>
@@ -171,6 +175,10 @@
     </div>
 </div>
 
+
+
+
+
 <!--工具条-->
 <div th:replace="_fragments :: tools"></div>
 
@@ -182,7 +190,7 @@
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
 <!--/*/</th:block>/*/-->
 <!--赞赏功能，点击弹出二维码 -->
-<script>
+<script th:inline="javascript">
     $(".toc-btn").popup({
         popup: $(".toc-con.popup"),
         on: "click",
@@ -227,9 +235,10 @@
             $(".headFoot").addClass("headAndFoot");
         }
     });
+
     /*生成二维码*/
     var qrcode = new QRCode("qrcode", {
-        text: "http://qzjblog.cn/blog/",
+        text: "http://qzjblog.cn/blog",
         width: 90,
         height: 90,
         colorDark: "#BA55D3",

@@ -24,4 +24,8 @@ public interface UserService {
     User checkEmail(String email);
 
     User finAddUser(User user);
+
+    User selectUserByEmail(String email);
+
+    User updatePsd(String email, String password);
 }
