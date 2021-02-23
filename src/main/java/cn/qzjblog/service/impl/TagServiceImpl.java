@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
             throw new NotFoundException("不存在该类型");
         }
         BeanUtils.copyProperties(tag, t);
-        tagMapper.insert(tag);
+        tagMapper.updateById(tag);
         return tag;
     }
 

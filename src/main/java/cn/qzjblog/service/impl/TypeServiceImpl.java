@@ -41,7 +41,7 @@ public class TypeServiceImpl implements TypeService {
         }
         BeanUtils.copyProperties(type,t);
         //返回新加的
-        typeMapper.insert(type);
+        typeMapper.updateById(type);
         return type;
     }
 

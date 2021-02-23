@@ -87,7 +87,7 @@
                 <tr>
                     <th th:if="${(page.getTotal)-(page.getSize())>=1}" colspan="7">
                        <div   class="ui  pagination menu">
-                            <a onclick="page(this)" th:attr="data-current=${page.getCurrent()}-1" th:unless="${page.hasNext()}"
+                            <a onclick="page(this)" th:attr="data-current=${page.getCurrent()}-1" th:unless="${page.getCurrent eq 1}"
                                class=" item">上一页</a>
                             <a onclick="page(this)" th:attr="data-current=${page.getCurrent()}+1" class=" item"
                                th:unless="${page.getCurrent() eq lastPage}">下一页</a>
